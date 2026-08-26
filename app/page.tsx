@@ -33,18 +33,18 @@ export default function Home() {
       <section className="hero" id="inicio">
         <div className="grid-lines" aria-hidden="true" /><div className="scan" aria-hidden="true" />
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Grande São Paulo · Projeto de implantação</div>
-          <h1>PRONTOS PARA<br /><strong>O PRÓXIMO NÍVEL.</strong></h1>
-          <p>Uma proposta de excelência, disciplina e preparo para a implantação de uma unidade de ações especiais conduzida pelo 18º BPM/M – Virtual.</p>
-          <div className="hero-actions"><a className="primary" href="#projeto">Explorar o projeto <span>→</span></a><a className="secondary" href="#estrutura"><i className="play">▶</i> Ver estrutura</a></div>
+          <div className="eyebrow"><span className="pulse" /> ORDEM DE MISSÃO 018 · GRANDE SÃO PAULO</div>
+          <h1>DISCIPLINA.<br /><strong>PREPARO. PRESENÇA.</strong></h1>
+          <p>Projeto de implantação de uma unidade BAEP estruturada pelo 18º BPM/M – Virtual, com comando, doutrina, formação e planejamento operacional.</p>
+          <div className="hero-actions"><a className="primary" href="#projeto">ABRIR PLANO DE MISSÃO <span>→</span></a><a className="secondary" href="#estrutura"><i className="play">◆</i> CADEIA DE COMANDO</a></div>
         </div>
         <div className="hero-visual" aria-hidden="true">
           <div className="orbit orbit-a" /><div className="orbit orbit-b" /><div className="crest-wrap"><div className="crest-aura" /><Crest /></div>
-          <div className="datum datum-a"><span>COMANDO</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>ÁREA DE ATUAÇÃO</span><b>GRANDE SÃO PAULO</b></div><div className="datum datum-c"><span>STATUS</span><b><i /> PRONTO PARA IMPLANTAÇÃO</b></div>
+          <div className="datum datum-a"><span>UNIDADE RESPONSÁVEL</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>TEATRO DE OPERAÇÕES</span><b>GRANDE SÃO PAULO</b></div><div className="datum datum-c"><span>SITUAÇÃO</span><b><i /> EM FASE DE IMPLANTAÇÃO</b></div>
         </div>
         <div className="hero-index"><span>01</span><div /><small>VISÃO ESTRATÉGICA</small></div><div className="scroll-cue"><span>SCROLL PARA EXPLORAR</span><i>↓</i></div>
       </section>
-      <section className="ticker" aria-label="Pilares da unidade"><div>DISCIPLINA <b>✦</b> PREPARO <b>✦</b> PRESENÇA <b>✦</b> EXCELÊNCIA OPERACIONAL <b>✦</b> DISCIPLINA <b>✦</b> PREPARO</div></section>
+      <section className="ticker" aria-label="Pilares da unidade"><div>MISSÃO <b>◆</b> DISCIPLINA <b>◆</b> PREPARO <b>◆</b> PRESENÇA <b>◆</b> LEALDADE <b>◆</b> EXCELÊNCIA OPERACIONAL</div></section>
       <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios da Grande São Paulo.</p></section>
       <section className="pillars">
         {[['01','PRESENÇA','Atuação coordenada, pronta resposta e domínio territorial.'],['02','PREPARO','Formação contínua, doutrina e avaliação técnica.'],['03','DISCIPLINA','Comando presente, procedimentos claros e padrão elevado.'],['04','INOVAÇÃO','Tecnologia aplicada à gestão, instrução e planejamento.']].map(([n,t,d])=><article className="tilt-card" key={n}><span>{n}</span><div className="card-icon">{n==='01'?'⌖':n==='02'?'◈':n==='03'?'◆':'◉'}</div><h3>{t}</h3><p>{d}</p><i>↗</i></article>)}
