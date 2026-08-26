@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 function Crest() {
   return (
     <div className="crest crest-photo" aria-label="Brasão do 7º BAEP">
-      <img src="/projeto-baep-18bpmm/baep-crest.png" alt="Brasão do 7º BAEP" />
+        <img src="/projeto-baep-18bpmm/baep-crest-360-web.png" alt="Brasão do 7º BAEP — Ações Especiais" />
     </div>
   );
 }
