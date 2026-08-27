@@ -13,12 +13,38 @@ function Crest() {
 export default function Home() {
   const [menu, setMenu] = useState(false);
   useEffect(() => {
+    let frame = 0;
     const move = (event: PointerEvent) => {
-      document.documentElement.style.setProperty('--mx', `${event.clientX}px`);
-      document.documentElement.style.setProperty('--my', `${event.clientY}px`);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const x = event.clientX / window.innerWidth - 0.5;
+        const y = event.clientY / window.innerHeight - 0.5;
+        const root = document.documentElement.style;
+        root.setProperty('--mx', `${event.clientX}px`);
+        root.setProperty('--my', `${event.clientY}px`);
+        root.setProperty('--parallax-x', `${x * 18}px`);
+        root.setProperty('--parallax-y', `${y * 14}px`);
+        root.setProperty('--tilt-x', `${y * -4}deg`);
+        root.setProperty('--tilt-y', `${x * 6}deg`);
+      });
     };
-    window.addEventListener('pointermove', move);
-    return () => window.removeEventListener('pointermove', move);
+    const sections = document.querySelectorAll<HTMLElement>('main > section:not(.hero)');
+    sections.forEach((section) => section.classList.add('reveal-section'));
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    sections.forEach((section) => observer.observe(section));
+    window.addEventListener('pointermove', move, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('pointermove', move);
+      observer.disconnect();
+    };
   }, []);
   return (
     <main>
