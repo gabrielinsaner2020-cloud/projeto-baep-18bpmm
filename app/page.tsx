@@ -10,11 +10,25 @@ function Crest() {
   );
 }
 
+
+const operationalStages = [
+  { code:'01', title:'LEITURA DA CIDADE', label:'Diagnóstico territorial', description:'Organização das informações necessárias para compreender setores, horários, demandas recorrentes e prioridades da cidade de implantação.', bullets:['Divisão inicial por setores','Identificação de períodos prioritários','Levantamento de demandas recorrentes','Integração com as unidades existentes'], readiness:'92%', channel:'INTEL-01' },
+  { code:'02', title:'PLANEJAMENTO', label:'Construção do ciclo', description:'Transformação do diagnóstico em objetivos, responsabilidades, recursos necessários e critérios claros de acompanhamento.', bullets:['Objetivo principal definido','Responsáveis por cada entrega','Cronograma e pontos de controle','Critérios de sucesso documentados'], readiness:'88%', channel:'PLAN-02' },
+  { code:'03', title:'DISTRIBUIÇÃO DE EQUIPES', label:'Organização do efetivo', description:'Distribuição equilibrada das equipes conforme formação, função, disponibilidade e prioridade institucional.', bullets:['Funções e lideranças definidas','Equilíbrio entre setores','Comunicação padronizada','Reserva e substituições previstas'], readiness:'95%', channel:'CMD-03' },
+  { code:'04', title:'EXECUÇÃO COORDENADA', label:'Ativação controlada', description:'Início das atividades com comando presente, comunicação contínua e registro das decisões tomadas durante o ciclo.', bullets:['Briefing antes da ativação','Supervisão durante o ciclo','Atualização contínua do comando','Registro das ocorrências relevantes'], readiness:'90%', channel:'OPS-04' },
+  { code:'05', title:'RELATÓRIO E AVALIAÇÃO', label:'Aprendizado institucional', description:'Consolidação dos resultados, identificação de oportunidades e definição das melhorias para o próximo ciclo.', bullets:['Debriefing estruturado','Indicadores consolidados','Lições aprendidas registradas','Plano de melhoria aprovado'], readiness:'100%', channel:'QA-05' }
+];
+
 export default function Home() {
   const [menu, setMenu] = useState(false);
   const [booting, setBooting] = useState(true);
+  const [bootProgress, setBootProgress] = useState(0);
+  const [activeOperation, setActiveOperation] = useState(0);
+  const [clock, setClock] = useState('00:00:00');
   useEffect(() => {
     const bootTimer = window.setTimeout(() => setBooting(false), 4200);
+    const progressTimer = window.setInterval(() => setBootProgress((value) => Math.min(100, value + 1)), 38);
+    const clockTimer = window.setInterval(() => setClock(new Date().toLocaleTimeString('pt-BR')), 1000);
     let frame = 0;
     const move = (event: PointerEvent) => {
       cancelAnimationFrame(frame);
@@ -64,6 +78,8 @@ export default function Home() {
     window.addEventListener('pointermove', move, { passive: true });
     return () => {
       window.clearTimeout(bootTimer);
+      window.clearInterval(progressTimer);
+      window.clearInterval(clockTimer);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', move);
       observer.disconnect();
@@ -83,8 +99,10 @@ export default function Home() {
         </div>
         <div className="boot-copy"><span>18º BATALHÃO DE POLÍCIA MILITAR METROPOLITANO</span><strong>CENTRAL DE IMPLANTAÇÃO</strong><small>INICIALIZANDO PROJETO INSTITUCIONAL BAEP</small></div>
         <div className="boot-steps"><span>01 VALIDANDO IDENTIDADE</span><span>02 SINCRONIZANDO COMANDO</span><span>03 CARREGANDO DOUTRINA</span><span>04 SISTEMA PRONTO</span></div>
-        <div className="boot-progress"><i /></div>
-        <div className="boot-progress-label"><span>CARREGAMENTO OPERACIONAL</span><b>100%</b></div>
+        <div className="boot-terminal"><span><i /> identidade_18bpmm: validada</span><span><i /> cadeia_comando: sincronizada</span><span><i /> matriz_formacao: carregada</span><span><i /> protocolo_implantacao: ativo</span></div>
+        <div className="boot-wave"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
+        <div className="boot-progress"><i style={{ width: `${bootProgress}%` }} /></div>
+        <div className="boot-progress-label"><span>CARREGAMENTO OPERACIONAL</span><b>{bootProgress}%</b></div>
         <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
       </div>
       <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
@@ -128,11 +146,26 @@ export default function Home() {
       </section>
       <section className="operations" id="operacao">
         <header className="section-head"><div><p className="kicker">MODELO DE ATUAÇÃO</p><h2>COMO VAMOS<br/><em>TRABALHAR.</em></h2></div><p>Presença planejada, integração entre equipes e uma rotina clara de comando, execução e avaliação.</p></header>
-        <div className="ops-dashboard">
-          <aside className="ops-nav"><small>CENTRAL OPERACIONAL</small>{['Leitura da cidade','Planejamento','Distribuição de equipes','Execução coordenada','Relatório e avaliação'].map((x,i)=><button key={x} className={i===0?'active':''}><span>0{i+1}</span>{x}<b>↗</b></button>)}</aside>
-          <div className="ops-map"><div className="map-grid"/><div className="map-ring ring-one"/><div className="map-ring ring-two"/><div className="map-node node-a"><i/>SETOR NORTE</div><div className="map-node node-b"><i/>SETOR CENTRAL</div><div className="map-node node-c"><i/>SETOR SUL</div><div className="map-command"><span>18º BPM/M</span><b>CENTRO DE COMANDO</b><small>COORDENAÇÃO INTEGRADA</small></div><div className="map-status"><span>SITUAÇÃO OPERACIONAL</span><b><i/> MONITORAMENTO ATIVO</b></div></div>
-          <aside className="ops-detail"><span>01 / DIAGNÓSTICO</span><h3>LEITURA<br/>DA CIDADE</h3><p>Mapeamento dos setores, horários, demandas recorrentes e prioridades para orientar presença e emprego responsável do efetivo.</p><ul><li>Definição de setores</li><li>Janela de atuação</li><li>Pontos de atenção</li><li>Coordenação com unidades</li></ul></aside>
+        <div className="ops-dashboard advanced">
+          <aside className="ops-nav"><small>CENTRAL OPERACIONAL</small>{operationalStages.map((stage,i)=><button key={stage.code} className={activeOperation===i?'active':''} onClick={() => setActiveOperation(i)} aria-pressed={activeOperation===i}><span>{stage.code}</span>{stage.title}<b>↗</b></button>)}<div className="ops-nav-footer"><i /> SISTEMA INTEGRADO<b>{clock}</b></div></aside>
+          <div className="ops-map">
+            <div className="map-grid"/><div className="radar-cross horizontal"/><div className="radar-cross vertical"/><div className="map-ring ring-one"/><div className="map-ring ring-two"/><div className="map-ring ring-three"/>
+            <div className="map-top-data"><span>RADAR / 18-BPMM</span><b>{operationalStages[activeOperation].channel}</b><i>● MONITORAMENTO ATIVO</i></div>
+            <div className="map-node node-a"><i/>SETOR ALFA<small>PRIORIDADE 01</small></div><div className="map-node node-b"><i/>SETOR BRAVO<small>PRIORIDADE 02</small></div><div className="map-node node-c"><i/>SETOR CHARLIE<small>PRIORIDADE 03</small></div><div className="map-node node-d"><i/>APOIO<small>RESERVA</small></div>
+            <div className="map-command"><span>18º BPM/M</span><b>CENTRO DE COMANDO</b><small>{operationalStages[activeOperation].label}</small><div className="command-bars"><i/><i/><i/><i/><i/></div></div>
+            <div className="map-status"><span>SITUAÇÃO OPERACIONAL</span><b><i/> MONITORAMENTO ATIVO</b></div>
+            <div className="map-coordinates"><span>SETOR</span><b>GERAL</b><span>COBERTURA</span><b>03 + APOIO</b><span>ATUALIZAÇÃO</span><b>{clock}</b></div>
+            <div className="map-scale"><i/><i/><i/><i/><i/><span>ESCALA TERRITORIAL / ADAPTÁVEL</span></div>
+          </div>
+          <aside className="ops-detail"><span>{operationalStages[activeOperation].code} / {operationalStages[activeOperation].label}</span><h3>{operationalStages[activeOperation].title}</h3><p>{operationalStages[activeOperation].description}</p><div className="detail-readiness"><small>NÍVEL DE PREPARAÇÃO</small><b>{operationalStages[activeOperation].readiness}</b><i><span style={{width:operationalStages[activeOperation].readiness}}/></i></div><ul>{operationalStages[activeOperation].bullets.map((item)=><li key={item}>{item}</li>)}</ul><footer><span>CANAL ATIVO</span><b>{operationalStages[activeOperation].channel}</b></footer></aside>
         </div>
+        <div className="ops-intelligence">{[
+          ['SISTEMA','ONLINE','Integração dos módulos'],
+          ['COBERTURA','04 NÍVEIS','Setores e apoio'],
+          ['CICLO','05 ETAPAS','Do diagnóstico à avaliação'],
+          ['COMANDO','ATIVO','Supervisão e controle'],
+          ['QUALIDADE','CONTÍNUA','Revisão e melhoria']
+        ].map(([t,v,d],i)=><article key={t}><span>0{i+1}</span><small>{t}</small><b>{v}</b><p>{d}</p><i /></article>)}</div>
         <div className="workflows">{[['BRIEFING','Antes de cada ciclo','Objetivos, equipes, comunicação e responsabilidades definidos pelo comando.'],['PRESENÇA','Durante a atuação','Equipes distribuídas por setores com coordenação, disciplina e comunicação contínua.'],['DEBRIEFING','Após cada ciclo','Registro dos resultados, revisão das decisões e plano de melhoria para a próxima atuação.']].map(([t,s,d],i)=><article key={t}><b>0{i+1}</b><small>{s}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
       </section>
       <section className="structure" id="estrutura">
