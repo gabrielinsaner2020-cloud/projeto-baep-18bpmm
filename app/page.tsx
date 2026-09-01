@@ -87,12 +87,13 @@ export default function Home() {
         <header className="section-head"><div><p className="kicker">CADEIA DE COMANDO</p><h2>ESTRUTURA DA<br/><em>UNIDADE</em></h2></div><p>Uma organização construída sobre liderança, responsabilidade e integração.</p></header>
         <div className="command-grid">
           <article className="leader leader-main"><span className="rank">✵✵✧</span><small>RESPONSÁVEL GERAL</small><h3>TEN-CEL<br/>RAFAEL AGUIAR</h3><div className="leader-code">CMD / 001</div></article>
-          <article className="leader"><span className="rank">✵✧✧</span><small>SUBCOMANDO · RH</small><h3>MAJ PM<br/>GABRIEL SANTOS</h3><div className="leader-code">SCMD / 002</div></article>
-          <article className="leader"><span className="rank">✧✧✧</span><small>OFICIAL</small><h3>CAP PM<br/>VALDIR</h3><div className="leader-code">OF / 003</div></article>
-          <article className="leader accent"><span className="rank">✧</span><small>UNIDADE DE MOTOS</small><h3>2º TEN PM<br/>H. SMITH</h3><div className="leader-code">MOTO / 004</div></article>
+          <article className="leader"><span className="rank">✵✧✧</span><small>SUBCOMANDO</small><h3>MAJ PM<br/>JERALDO</h3><div className="leader-code">SCMD / 002</div></article>
+          <article className="leader"><span className="rank">✧✧✧</span><small>RECURSOS HUMANOS</small><h3>CAP PM<br/>GABRIEL SANTOS</h3><div className="leader-code">RH / 003</div></article>
+          <article className="leader"><span className="rank">✧✧</span><small>OFICIAL</small><h3>1º TEN PM<br/>VALDIR</h3><div className="leader-code">OF / 004</div></article>
+          <article className="leader accent"><span className="rank">✧</span><small>UNIDADE DE MOTOS</small><h3>2º TEN PM<br/>H. SMITH</h3><div className="leader-code">MOTO / 005</div></article>
         </div>
         <div className="roster">
-          {[['✯','ASP PM','VITOR'],['❯❯ ❯❯❯','1º SGT PM','DEREK OLIVEIRA'],['❯❯ ❯❯❯','1º SGT PM','VITOR HUGO'],['❯❯❯','3º SGT PM','JOTA BUENO'],['◊❯❯','ALN SGT PM','ARTHUR PORTELLA'],['❯❯','CB PM','MARCOS SILVA'],['❯❯','CB PM','FELIPE ALMEIDA'],['❯❯','CB PM','MAYCON RIOS'],['❯','SD PM','JOAO CAVALCANTE'],['❯','SD PM','MATHEUS SILVA'],['❯','SD PM','BIREL COSTA']].map(([s,r,n],i)=><div className="roster-row" key={n}><b>{String(i+5).padStart(2,'0')}</b><span>{s}</span><small>{r}</small><strong>{n}</strong><i>ATIVO</i></div>)}
+          {[['✯','ASP PM','VITOR'],['❯❯ ❯❯❯','1º SGT PM','DEREK OLIVEIRA'],['❯❯ ❯❯❯','1º SGT PM','VITOR HUGO'],['❯❯❯','3º SGT PM','JOTA BUENO'],['◊❯❯','ALN SGT PM','ARTHUR PORTELLA'],['❯❯','CB PM','MARCOS SILVA'],['❯❯','CB PM','FELIPE ALMEIDA'],['❯❯','CB PM','MAYCON RIOS'],['❯','SD PM','JOAO CAVALCANTE'],['❯','SD PM','MATHEUS SILVA'],['❯','SD PM','BIREL COSTA']].map(([s,r,n],i)=><div className="roster-row" key={n}><b>{String(i+6).padStart(2,'0')}</b><span>{s}</span><small>{r}</small><strong>{n}</strong><i>ATIVO</i></div>)}
         </div>
       </section>
       <section className="academy" id="formacao">
@@ -108,7 +109,7 @@ export default function Home() {
       </section>
       <section className="governance">
         <div className="governance-copy"><p className="kicker">GESTÃO DA UNIDADE</p><h2>PADRÃO EM<br/><em>CADA DETALHE.</em></h2><p>A unidade trabalha com responsabilidades definidas, registro de decisões e acompanhamento contínuo do efetivo.</p></div>
-        <div className="governance-grid">{[['COMANDO GERAL','Direção estratégica, prioridades e validação das operações.','TEN-CEL Rafael Aguiar'],['SUBCOMANDO E RH','Escalas, documentação, desenvolvimento e acompanhamento.','MAJ PM Gabriel Santos'],['UNIDADE DE MOTOS','Formação específica, prontidão e gestão da mobilidade.','2º TEN PM H. Smith'],['INSTRUÇÃO','Calendário, instrutores, avaliações e certificações.','Comissão de Formação'],['CONTROLE DE QUALIDADE','Revisão de relatórios, indicadores e plano de melhoria.','Comando da Unidade'],['COMUNICAÇÃO','Briefings, avisos, agenda e memória institucional.','Secretaria Operacional']].map(([t,d,r],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p><small>RESPONSÁVEL</small><b>{r}</b></article>)}</div>
+        <div className="governance-grid">{[['COMANDO GERAL','Direção estratégica, prioridades e validação das operações.','TEN-CEL Rafael Aguiar'],['SUBCOMANDO','Coordenação da unidade, apoio ao comando e supervisão das atividades.','MAJ PM Jeraldo'],['RECURSOS HUMANOS','Escalas, documentação, desenvolvimento e acompanhamento.','CAP PM Gabriel Santos'],['UNIDADE DE MOTOS','Formação específica, prontidão e gestão da mobilidade.','2º TEN PM H. Smith'],['INSTRUÇÃO','Calendário, instrutores, avaliações e certificações.','Comissão de Formação'],['CONTROLE DE QUALIDADE','Revisão de relatórios, indicadores e plano de melhoria.','Comando da Unidade'],['COMUNICAÇÃO','Briefings, avisos, agenda e memória institucional.','Secretaria Operacional']].map(([t,d,r],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p><small>RESPONSÁVEL</small><b>{r}</b></article>)}</div>
       </section>
       <section className="indicators">
         <header><p className="kicker">PAINEL DE PRONTIDÃO</p><h2>O QUE VAMOS<br/><em>ACOMPANHAR.</em></h2></header>
