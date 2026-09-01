@@ -12,7 +12,9 @@ function Crest() {
 
 export default function Home() {
   const [menu, setMenu] = useState(false);
+  const [booting, setBooting] = useState(true);
   useEffect(() => {
+    const bootTimer = window.setTimeout(() => setBooting(false), 2400);
     let frame = 0;
     const move = (event: PointerEvent) => {
       cancelAnimationFrame(frame);
@@ -39,15 +41,45 @@ export default function Home() {
       });
     }, { threshold: 0.08 });
     sections.forEach((section) => observer.observe(section));
+    const counters = document.querySelectorAll<HTMLElement>('[data-count]');
+    const countObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const element = entry.target as HTMLElement;
+        const target = Number(element.dataset.count || 0);
+        const suffix = element.dataset.suffix || '';
+        const started = performance.now();
+        const duration = 1400;
+        const animate = (now: number) => {
+          const progress = Math.min((now - started) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          element.textContent = String(Math.round(target * eased)).padStart(target < 10 ? 2 : 1, '0') + suffix;
+          if (progress < 1) requestAnimationFrame(animate);
+        };
+        requestAnimationFrame(animate);
+        countObserver.unobserve(element);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach((counter) => countObserver.observe(counter));
     window.addEventListener('pointermove', move, { passive: true });
     return () => {
+      window.clearTimeout(bootTimer);
       cancelAnimationFrame(frame);
       window.removeEventListener('pointermove', move);
       observer.disconnect();
+      countObserver.disconnect();
     };
   }, []);
   return (
     <main>
+      <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
+        <div className="boot-grid" />
+        <div className="boot-emblem"><Crest /></div>
+        <div className="boot-copy"><span>18º BPM/M</span><strong>SISTEMA INICIADO</strong><small>PROJETO BAEP · GRANDE SÃO PAULO</small></div>
+        <div className="boot-progress"><i /></div>
+        <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
+      </div>
+      <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
       <div className="cursor-glow" aria-hidden="true" />
       <nav className="nav">
         <a className="brand" href="#inicio"><Crest /><span><b>18º BPM/M</b><small>PROJETO BAEP</small></span></a>
@@ -97,7 +129,7 @@ export default function Home() {
         </div>
       </section>
       <section className="academy" id="formacao">
-        <div className="academy-copy"><p className="kicker">ACADEMIA DE FORMAÇÃO</p><h2>PREPARO QUE<br/><em>DEFINE O PADRÃO.</em></h2><p>Uma trilha progressiva que transforma conhecimento em prontidão, com instrução, simulação, avaliação e reciclagem.</p><div className="academy-stat"><b>06</b><span>MÓDULOS<br/>ESTRATÉGICOS</span><b>100%</b><span>AVALIAÇÃO<br/>CONTÍNUA</span></div></div>
+        <div className="academy-copy"><p className="kicker">ACADEMIA DE FORMAÇÃO</p><h2>PREPARO QUE<br/><em>DEFINE O PADRÃO.</em></h2><p>Uma trilha progressiva que transforma conhecimento em prontidão, com instrução, simulação, avaliação e reciclagem.</p><div className="academy-stat"><b className="count-up" data-count="6">00</b><span>MÓDULOS<br/>ESTRATÉGICOS</span><b className="count-up" data-count="100" data-suffix="%">0%</b><span>AVALIAÇÃO<br/>CONTÍNUA</span></div></div>
         <div className="courses">
           {[['01','DOUTRINA E DISCIPLINA','Fundamentos da unidade, postura e cadeia de comando.'],['02','ABORDAGEM TÁTICA','Procedimentos, comunicação e controle de cenário.'],['03','PATRULHAMENTO ESPECIALIZADO','Planejamento, progressão e atuação coordenada.'],['04','OPERAÇÕES COM MOTOCICLETAS','Mobilidade, escolta e pronta resposta.'],['05','GERENCIAMENTO DE CRISES','Tomada de decisão, negociação e comando.'],['06','LIDERANÇA OPERACIONAL','Gestão de equipe, avaliação e desenvolvimento.']].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><b>＋</b></article>)}
         </div>
