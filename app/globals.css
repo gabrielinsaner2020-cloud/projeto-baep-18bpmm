@@ -65,3 +65,27 @@
 @keyframes bootGrid{from{opacity:0;transform:perspective(600px) rotateX(60deg) translateY(120px)}to{opacity:1;transform:perspective(600px) rotateX(60deg) translateY(0)}}@keyframes bootScan{to{transform:translateX(100%)}}@keyframes bootEmblem{from{opacity:0;transform:scale(.55);filter:blur(8px)}to{opacity:1;transform:scale(1);filter:none}}@keyframes bootText{from{opacity:0;letter-spacing:.45em}to{opacity:1;letter-spacing:.2em}}@keyframes bootProgress{from{width:0}to{width:100%}}@keyframes particleRise{0%{transform:translateY(0);opacity:0}15%{opacity:.18}85%{opacity:.12}100%{transform:translateY(-110vh);opacity:0}}@keyframes sectionSweep{0%{transform:translateX(-115%);opacity:0}20%{opacity:1}100%{transform:translateX(115%);opacity:0}}@keyframes crestFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(var(--parallax-x,0),-11px,0)}}@keyframes crestCinematic{0%,100%{transform:scale(1);filter:drop-shadow(0 20px 32px rgba(0,0,0,.78))}50%{transform:scale(1.025);filter:drop-shadow(-9px 0 20px rgba(22,133,229,.25)) drop-shadow(9px 0 20px rgba(227,27,52,.18))}}@keyframes hudPulse{50%{opacity:.35;transform:scale(1.025)}}@keyframes rankIn{to{opacity:1;transform:none}}@keyframes commandLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes radarExpand{0%{transform:translate(-50%,-50%) scale(.35);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.15);opacity:0}}@keyframes nodePulse{50%{transform:scale(1.55);box-shadow:0 0 22px currentColor}}@keyframes commandPulse{50%{transform:scale(1.06);opacity:.35}}@keyframes radarSweep{to{transform:rotate(360deg)}}@keyframes flowIn{to{opacity:1;transform:none}}
 @media(max-width:900px){.boot-screen button{right:12px;bottom:12px}.particles i:nth-child(even){display:none}.reveal-section:before{display:none}.structure .leader,.training-system .flow-item{opacity:1;transform:none}.structure.is-visible .leader,.training-system.is-visible .flow-item{animation:none}.ops-map:after{width:44%}}
 @media(prefers-reduced-motion:reduce){.boot-screen{display:none}.particles{display:none}.crest-wrap,.crest-wrap>.crest-photo img,.map-ring,.map-node i,.map-command:after,.ops-map:after{animation:none!important}.structure .leader,.training-system .flow-item{opacity:1;transform:none}.reveal-section:before{display:none}}
+
+
+/* Conteúdo ampliado da matriz de formação */
+.training-grid article{min-height:430px}
+.course-influence{margin:22px 0 48px;padding:16px;border-left:2px solid var(--blue);background:rgba(22,133,229,.055);display:grid;gap:7px}
+.course-influence small{font-size:6px;letter-spacing:.17em;color:#64829a}
+.course-influence small:nth-of-type(2){margin-top:10px;color:#9c805d}
+.course-influence strong{font-size:9px;line-height:1.65;color:#d6dfe5;font-weight:600}
+.course-influence span{font-size:9px;line-height:1.65;color:#82919b}
+.formation-impact{margin-top:55px;border:1px solid var(--line);background:linear-gradient(135deg,rgba(22,133,229,.07),rgba(227,27,52,.035))}
+.formation-impact>header{padding:30px;border-bottom:1px solid var(--line)}
+.formation-impact>header span{font-size:7px;letter-spacing:.2em;color:var(--red)}
+.formation-impact>header h3{font-size:22px;letter-spacing:.06em;margin:10px 0 0}
+.formation-impact>div{display:grid;grid-template-columns:repeat(4,1fr)}
+.formation-impact article{padding:28px;min-height:190px;border-right:1px solid var(--line);transition:.3s}
+.formation-impact article:last-child{border-right:0}
+.formation-impact article:hover{background:rgba(255,255,255,.025);transform:translateY(-4px)}
+.formation-impact b{font-size:9px;color:var(--blue)}
+.formation-impact h4{font-size:13px;letter-spacing:.09em;margin:28px 0 12px}
+.formation-impact p{font-size:10px;line-height:1.75;color:#7b8992}
+.training-system.is-visible .formation-impact article{animation:rankIn .6s ease-out both}
+.training-system.is-visible .formation-impact article:nth-child(2){animation-delay:.12s}.training-system.is-visible .formation-impact article:nth-child(3){animation-delay:.24s}.training-system.is-visible .formation-impact article:nth-child(4){animation-delay:.36s}
+@media(max-width:900px){.training-grid article{min-height:410px}.formation-impact>div{grid-template-columns:1fr 1fr}.formation-impact article:nth-child(2){border-right:0}.formation-impact article{border-bottom:1px solid var(--line)}}
+@media(max-width:540px){.training-grid article{min-height:430px}.formation-impact>div{grid-template-columns:1fr}.formation-impact article{min-height:auto;border-right:0}.course-influence{margin-bottom:52px}}
