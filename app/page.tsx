@@ -14,7 +14,7 @@ export default function Home() {
   const [menu, setMenu] = useState(false);
   const [booting, setBooting] = useState(true);
   useEffect(() => {
-    const bootTimer = window.setTimeout(() => setBooting(false), 2400);
+    const bootTimer = window.setTimeout(() => setBooting(false), 4200);
     let frame = 0;
     const move = (event: PointerEvent) => {
       cancelAnimationFrame(frame);
@@ -73,10 +73,18 @@ export default function Home() {
   return (
     <main>
       <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
-        <div className="boot-grid" />
-        <div className="boot-emblem"><Crest /></div>
-        <div className="boot-copy"><span>18º BPM/M</span><strong>SISTEMA INICIADO</strong><small>PROJETO GERAL DE IMPLANTAÇÃO BAEP</small></div>
+        <div className="boot-grid" /><div className="boot-noise" /><div className="boot-scanline" />
+        <div className="boot-corner boot-corner-a">SYS / 18-BPMM</div><div className="boot-corner boot-corner-b">PROTOCOLO BAEP</div>
+        <div className="boot-status"><i /> CONEXÃO SEGURA <span>ONLINE</span></div>
+        <div className="boot-stage">
+          <div className="boot-telemetry left"><span>COMANDO</span><b>VALIDADO</b><span>EFETIVO</span><b>SINCRONIZADO</b><span>DOUTRINA</span><b>CARREGADA</b></div>
+          <div className="boot-emblem"><div className="boot-ring ring-a" /><div className="boot-ring ring-b" /><Crest /></div>
+          <div className="boot-telemetry right"><span>IDENTIDADE</span><b>18º BPM/M</b><span>PROJETO</span><b>BAEP</b><span>STATUS</span><b>PRONTO</b></div>
+        </div>
+        <div className="boot-copy"><span>18º BATALHÃO DE POLÍCIA MILITAR METROPOLITANO</span><strong>CENTRAL DE IMPLANTAÇÃO</strong><small>INICIALIZANDO PROJETO INSTITUCIONAL BAEP</small></div>
+        <div className="boot-steps"><span>01 VALIDANDO IDENTIDADE</span><span>02 SINCRONIZANDO COMANDO</span><span>03 CARREGANDO DOUTRINA</span><span>04 SISTEMA PRONTO</span></div>
         <div className="boot-progress"><i /></div>
+        <div className="boot-progress-label"><span>CARREGAMENTO OPERACIONAL</span><b>100%</b></div>
         <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
       </div>
       <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
@@ -105,6 +113,18 @@ export default function Home() {
       <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios operacionais da cidade que receberá a unidade.</p></section>
       <section className="pillars">
         {[['01','PRESENÇA','Atuação coordenada, pronta resposta e domínio territorial.'],['02','PREPARO','Formação contínua, doutrina e avaliação técnica.'],['03','DISCIPLINA','Comando presente, procedimentos claros e padrão elevado.'],['04','INOVAÇÃO','Tecnologia aplicada à gestão, instrução e planejamento.']].map(([n,t,d])=><article className="tilt-card" key={n}><span>{n}</span><div className="card-icon">{n==='01'?'⌖':n==='02'?'◈':n==='03'?'◆':'◉'}</div><h3>{t}</h3><p>{d}</p><i>↗</i></article>)}
+      </section>
+      <section className="project-blueprint">
+        <header className="section-head"><div><p className="kicker">ARQUITETURA DO PROJETO</p><h2>UMA UNIDADE<br/><em>PRONTA PARA ASSUMIR.</em></h2></div><p>O projeto organiza pessoas, formação, comando, documentação e avaliação em um modelo adaptável à realidade da cidade de implantação.</p></header>
+        <div className="blueprint-grid">{[
+          ['01','OBJETIVO CENTRAL','Implantar uma unidade BAEP com identidade definida, cadeia de comando clara, efetivo preparado e capacidade de evolução contínua.'],
+          ['02','ENTREGA INSTITUCIONAL','Apresentar à administração uma proposta completa, compreensível e aplicável, com fases, responsáveis e resultados esperados.'],
+          ['03','ESTRUTURA HUMANA','Distribuir funções entre comando, RH, instrução, mobilidade, supervisão e efetivo operacional.'],
+          ['04','PADRÃO DE FORMAÇÃO','Garantir que cada integrante percorra uma trilha comum, seja avaliado e mantenha sua qualificação atualizada.'],
+          ['05','GESTÃO E CONTROLE','Registrar decisões, acompanhar indicadores, revisar resultados e transformar aprendizados em melhoria.'],
+          ['06','ADAPTAÇÃO LOCAL','Adequar cronograma, efetivo e prioridades à cidade que receberá a unidade sem perder a identidade do 18º BPM/M.']
+        ].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><i>↗</i></article>)}</div>
+        <div className="project-promise"><span>COMPROMISSO DO 18º BPM/M</span><strong>ENTREGAR UMA UNIDADE ORGANIZADA, CAPACITADA, AVALIÁVEL E PRONTA PARA EVOLUIR.</strong></div>
       </section>
       <section className="operations" id="operacao">
         <header className="section-head"><div><p className="kicker">MODELO DE ATUAÇÃO</p><h2>COMO VAMOS<br/><em>TRABALHAR.</em></h2></div><p>Presença planejada, integração entre equipes e uma rotina clara de comando, execução e avaliação.</p></header>
@@ -168,6 +188,26 @@ export default function Home() {
       <section className="indicators">
         <header><p className="kicker">PAINEL DE PRONTIDÃO</p><h2>O QUE VAMOS<br/><em>ACOMPANHAR.</em></h2></header>
         <div className="indicator-grid">{[['01','EFETIVO','Presença, disponibilidade e distribuição por função.','100%'],['02','FORMAÇÃO','Cursos concluídos, avaliações e reciclagens.','12 trilhas'],['03','DISCIPLINA','Pontualidade, registros e cumprimento dos padrões.','Contínuo'],['04','OPERAÇÃO','Planejamento executado e relatórios finalizados.','Por ciclo'],['05','LIDERANÇA','Feedback, evolução e desenvolvimento do efetivo.','Mensal'],['06','QUALIDADE','Lições aprendidas e ações de melhoria implementadas.','Semanal']].map(([n,t,d,v])=><article key={n}><span>{n}</span><h3>{t}</h3><strong>{v}</strong><p>{d}</p><div><i/></div></article>)}</div>
+      </section>
+      <section className="readiness-system">
+        <header className="section-head"><div><p className="kicker">CONDIÇÕES DE IMPLANTAÇÃO</p><h2>O QUE PRECISA<br/><em>ESTAR PRONTO.</em></h2></div><p>A ativação acontece somente quando estrutura, pessoas, formação e gestão atingem o padrão mínimo definido pelo comando.</p></header>
+        <div className="readiness-board">
+          <div className="readiness-levels">{[
+            ['01','COMANDO E FUNÇÕES','Nomeação formal dos responsáveis, substituições previstas e atribuições documentadas.','ESSENCIAL'],
+            ['02','EFETIVO E ESCALAS','Quantidade compatível, disponibilidade conhecida e distribuição equilibrada por função.','ESSENCIAL'],
+            ['03','FORMAÇÃO CERTIFICADA','Trilhas obrigatórias concluídas, avaliações registradas e reciclagens programadas.','OBRIGATÓRIO'],
+            ['04','ROTINAS E DOCUMENTOS','Briefing, debriefing, relatórios, registros internos e comunicação padronizada.','OBRIGATÓRIO'],
+            ['05','RECURSOS E MOBILIDADE','Meios disponíveis, responsáveis definidos e controle de utilização estabelecido.','OPERACIONAL'],
+            ['06','INDICADORES E REVISÃO','Metas, acompanhamento periódico e plano de melhoria aprovado pelo comando.','CONTÍNUO']
+          ].map(([n,t,d,s])=><article key={n}><b>{n}</b><div><h3>{t}</h3><p>{d}</p></div><span>{s}</span></article>)}</div>
+          <aside className="approval-gate"><small>PORTÃO DE ATIVAÇÃO</small><h3>CRITÉRIO DE<br/>PRONTIDÃO</h3><div className="gate-score"><b className="count-up" data-count="100" data-suffix="%">0%</b><span>REQUISITOS<br/>VERIFICADOS</span></div><ul><li>Comando validado</li><li>Efetivo capacitado</li><li>Documentação aprovada</li><li>Rotina testada</li><li>Plano de melhoria ativo</li></ul><footer><i /> LIBERAÇÃO PELO COMANDO GERAL</footer></aside>
+        </div>
+        <div className="city-deliverables">{[
+          ['PLANO DE 90 DIAS','Cronograma inicial com prioridades, responsáveis e pontos de avaliação.'],
+          ['MATRIZ DE RESPONSABILIDADES','Definição clara de quem decide, executa, acompanha e comunica.'],
+          ['RELATÓRIO DE PRONTIDÃO','Visão consolidada da formação, do efetivo e das pendências antes da ativação.'],
+          ['CICLO DE REVISÃO','Reuniões periódicas para avaliar resultados e atualizar o plano da unidade.']
+        ].map(([t,d],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p></article>)}</div>
       </section>
       <section className="roadmap" id="implantacao">
         <header className="section-head"><div><p className="kicker">PLANO DE IMPLANTAÇÃO</p><h2>DA VISÃO À<br/><em>PRONTIDÃO.</em></h2></div><p>Quatro movimentos para estruturar, capacitar, validar e ativar a nova unidade.</p></header>
