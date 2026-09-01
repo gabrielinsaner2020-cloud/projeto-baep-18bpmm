@@ -75,7 +75,7 @@ export default function Home() {
       <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
         <div className="boot-grid" />
         <div className="boot-emblem"><Crest /></div>
-        <div className="boot-copy"><span>18º BPM/M</span><strong>SISTEMA INICIADO</strong><small>PROJETO BAEP · GRANDE SÃO PAULO</small></div>
+        <div className="boot-copy"><span>18º BPM/M</span><strong>SISTEMA INICIADO</strong><small>PROJETO GERAL DE IMPLANTAÇÃO BAEP</small></div>
         <div className="boot-progress"><i /></div>
         <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
       </div>
@@ -90,19 +90,19 @@ export default function Home() {
       <section className="hero" id="inicio">
         <div className="grid-lines" aria-hidden="true" /><div className="scan" aria-hidden="true" />
         <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Grande São Paulo · Projeto de implantação</div>
+          <div className="eyebrow"><span className="pulse" /> Projeto institucional · Implantação BAEP</div>
           <h1>PRONTOS PARA<br /><strong>O PRÓXIMO NÍVEL.</strong></h1>
           <p>Uma proposta de excelência, disciplina e preparo para a implantação de uma unidade de ações especiais conduzida pelo 18º BPM/M – Virtual.</p>
           <div className="hero-actions"><a className="primary" href="#projeto">Explorar o projeto <span>→</span></a><a className="secondary" href="#estrutura"><i className="play">▶</i> Ver estrutura</a></div>
         </div>
         <div className="hero-visual" aria-hidden="true">
           <div className="hud-corner top-left" /><div className="hud-corner bottom-right" /><div className="crest-wrap"><div className="crest-aura" /><Crest /></div>
-          <div className="datum datum-a"><span>COMANDO</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>ÁREA DE ATUAÇÃO</span><b>GRANDE SÃO PAULO</b></div><div className="datum datum-c"><span>STATUS</span><b><i /> PRONTO PARA IMPLANTAÇÃO</b></div>
+          <div className="datum datum-a"><span>COMANDO</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>DESTINO DO PROJETO</span><b>CIDADE DE IMPLANTAÇÃO</b></div><div className="datum datum-c"><span>STATUS</span><b><i /> PRONTO PARA IMPLANTAÇÃO</b></div>
         </div>
         <div className="hero-index"><span>01</span><div /><small>VISÃO ESTRATÉGICA</small></div><div className="scroll-cue"><span>SCROLL PARA EXPLORAR</span><i>↓</i></div>
       </section>
       <section className="ticker" aria-label="Pilares da unidade"><div>DISCIPLINA <b>✦</b> PREPARO <b>✦</b> PRESENÇA <b>✦</b> EXCELÊNCIA OPERACIONAL <b>✦</b> DISCIPLINA <b>✦</b> PREPARO</div></section>
-      <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios da Grande São Paulo.</p></section>
+      <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios operacionais da cidade que receberá a unidade.</p></section>
       <section className="pillars">
         {[['01','PRESENÇA','Atuação coordenada, pronta resposta e domínio territorial.'],['02','PREPARO','Formação contínua, doutrina e avaliação técnica.'],['03','DISCIPLINA','Comando presente, procedimentos claros e padrão elevado.'],['04','INOVAÇÃO','Tecnologia aplicada à gestão, instrução e planejamento.']].map(([n,t,d])=><article className="tilt-card" key={n}><span>{n}</span><div className="card-icon">{n==='01'?'⌖':n==='02'?'◈':n==='03'?'◆':'◉'}</div><h3>{t}</h3><p>{d}</p><i>↗</i></article>)}
       </section>
@@ -136,7 +136,29 @@ export default function Home() {
       </section>
       <section className="training-system">
         <header className="section-head"><div><p className="kicker">MATRIZ DE CAPACITAÇÃO</p><h2>CURSOS E<br/><em>CERTIFICAÇÕES.</em></h2></div><p>Formação organizada por níveis, com pré-requisitos, prática supervisionada, avaliação e reciclagem.</p></header>
-        <div className="training-grid">{[['BASE','Modulação e B.O. PM','Comunicação, registro padronizado e fluxo de informação.','4H'],['BASE','P.O.P. / Carceragem','Procedimentos, responsabilidades e documentação.','4H'],['BASE','Abordagem e Posicionamento','Postura, comunicação e segurança no atendimento.','6H'],['MOBILIDADE','Direção Defensiva','Condução responsável, prevenção e tomada de decisão.','6H'],['TÁTICO','TAT I','Fundamentos, disciplina de equipe e progressão formativa.','8H'],['TÁTICO','TAT II','Integração de equipe e resolução de cenários simulados.','8H'],['TÁTICO','TAT III','Liderança, coordenação e avaliação avançada.','10H'],['ESPECIALIZAÇÃO','SAT-A','Aperfeiçoamento técnico e atuação supervisionada.','6H'],['ESPECIALIZAÇÃO','SAT-B','Consolidação técnica e certificação de competência.','8H'],['FORMAÇÃO','CFC','Curso de formação para liderança, instrução e gestão.','12H'],['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H'],['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H']].map(([tag,t,d,h],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
+        <div className="training-grid">{[
+          ['BASE','Modulação e B.O. PM','Comunicação, registro padronizado e fluxo de informação.','4H','Reduz falhas de comunicação e melhora a qualidade dos registros.','Padronização de rádio, relatórios e passagem de serviço.'],
+          ['BASE','P.O.P. / Carceragem','Procedimentos, responsabilidades e documentação.','4H','Fortalece a segurança administrativa e a responsabilidade funcional.','Rotinas de custódia, conferência, registro e transferência.'],
+          ['BASE','Abordagem e Posicionamento','Postura, comunicação e segurança no atendimento.','6H','Desenvolve controle emocional, leitura de cenário e atuação coordenada.','Exercícios de verbalização, posicionamento e tomada de decisão.'],
+          ['MOBILIDADE','Direção Defensiva','Condução responsável, prevenção e tomada de decisão.','6H','Diminui riscos, preserva viaturas e aumenta a segurança da equipe.','Percepção de risco, condução preventiva e resposta a imprevistos.'],
+          ['TÁTICO','TAT I','Fundamentos, disciplina de equipe e progressão formativa.','8H','Cria uma base operacional comum para todo o efetivo.','Comandos, formação de equipe, disciplina e exercícios básicos.'],
+          ['TÁTICO','TAT II','Integração de equipe e resolução de cenários simulados.','8H','Aumenta a integração, a comunicação e a velocidade das decisões.','Simulações progressivas com funções e objetivos definidos.'],
+          ['TÁTICO','TAT III','Liderança, coordenação e avaliação avançada.','10H','Prepara graduados e oficiais para comandar equipes em cenários complexos.','Planejamento, supervisão, avaliação e correção de desempenho.'],
+          ['ESPECIALIZAÇÃO','SAT-A','Aperfeiçoamento técnico e atuação supervisionada.','6H','Transforma conhecimento teórico em competência prática observável.','Estações técnicas, repetição orientada e avaliação individual.'],
+          ['ESPECIALIZAÇÃO','SAT-B','Consolidação técnica e certificação de competência.','8H','Valida o padrão mínimo para atuação especializada na unidade.','Cenários integrados, prova prática e registro de desempenho.'],
+          ['FORMAÇÃO','CFC','Curso de formação para liderança, instrução e gestão.','12H','Forma líderes capazes de desenvolver pessoas e manter o padrão institucional.','Gestão de equipe, instrução, feedback, escala e acompanhamento.'],
+          ['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H','Amplia mobilidade, presença e capacidade de resposta da unidade.','Pilotagem aplicada, comunicação, patrulhamento e trabalho em dupla.'],
+          ['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H','Capacita o comandante a empregar e acompanhar a unidade de motocicletas.','Briefing, distribuição de equipes, supervisão e debriefing.']
+        ].map(([tag,t,d,h,impact,application],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
+        <div className="formation-impact">
+          <header><span>RESULTADO DA FORMAÇÃO</span><h3>O QUE A MATRIZ ENTREGA À UNIDADE</h3></header>
+          <div>{[
+            ['01','PADRONIZAÇÃO','Todos trabalham com os mesmos procedimentos, linguagem e critérios de qualidade.'],
+            ['02','PRONTIDÃO','O efetivo conhece sua função e responde com mais segurança e organização.'],
+            ['03','LIDERANÇA','Graduados e oficiais acompanham, orientam e desenvolvem suas equipes.'],
+            ['04','MELHORIA CONTÍNUA','Avaliações e reciclagens transformam falhas observadas em novos treinamentos.']
+          ].map(([n,t,d])=><article key={n}><b>{n}</b><h4>{t}</h4><p>{d}</p></article>)}</div>
+        </div>
         <div className="training-flow">{[['01','INSCRIÇÃO','Pré-requisitos'],['02','INSTRUÇÃO','Teoria orientada'],['03','SIMULAÇÃO','Prática supervisionada'],['04','AVALIAÇÃO','Critérios objetivos'],['05','CERTIFICAÇÃO','Registro e validade']].map(([n,t,d],i)=><div className="flow-item" key={n}><span>{n}</span><b>{t}</b><small>{d}</small>{i<4&&<i>→</i>}</div>)}</div>
       </section>
       <section className="governance">
@@ -150,7 +172,7 @@ export default function Home() {
       <section className="roadmap" id="implantacao">
         <header className="section-head"><div><p className="kicker">PLANO DE IMPLANTAÇÃO</p><h2>DA VISÃO À<br/><em>PRONTIDÃO.</em></h2></div><p>Quatro movimentos para estruturar, capacitar, validar e ativar a nova unidade.</p></header>
         <div className="timeline"><div className="progress-line" />{[['FASE 01','ESTRUTURAÇÃO','Definição de comando, funções, normas e identidade da unidade.'],['FASE 02','CAPACITAÇÃO','Ciclo intensivo de cursos, instruções e exercícios integrados.'],['FASE 03','VALIDAÇÃO','Avaliações técnicas, simulações e certificação do efetivo.'],['FASE 04','ATIVAÇÃO','Início das operações com acompanhamento e melhoria contínua.']].map(([f,t,d],i)=><article key={f}><div className="phase-dot">{i+1}</div><small>{f}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
-        <div className="final-cta"><Crest/><div><small>18º BPM/M – VIRTUAL</small><h2>DISCIPLINA. PREPARO.<br/>PRESENÇA.</h2><p>Grande São Paulo · Projeto BAEP</p></div><a href="#inicio">VOLTAR AO TOPO ↑</a></div>
+        <div className="final-cta"><Crest/><div><small>18º BPM/M – VIRTUAL</small><h2>DISCIPLINA. PREPARO.<br/>PRESENÇA.</h2><p>Projeto geral · Implantação BAEP</p></div><a href="#inicio">VOLTAR AO TOPO ↑</a></div>
       </section>
       <footer className="disclaimer">PROJETO VIRTUAL INDEPENDENTE · SEM VÍNCULO COM ÓRGÃOS PÚBLICOS REAIS</footer>
     </main>
