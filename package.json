@@ -9,6 +9,7 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "build:pages": "next build",
+    "vercel-build": "next build",
     "start": "vinext start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
   },
@@ -38,4 +39,3 @@
   },
   "type": "module"
 }
-
