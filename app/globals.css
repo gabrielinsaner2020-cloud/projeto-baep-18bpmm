@@ -16,3 +16,52 @@
 @media(max-width:900px){.hero{min-height:850px;padding-bottom:20px}.hero-visual{height:280px;margin-top:-12px;align-self:start;overflow:visible}.crest-wrap>.crest-photo{width:190px!important;height:auto!important}.hero-visual:before,.hero-visual:after{width:65px;height:65px}.datum-a{top:10%}.datum-b{bottom:8%}.datum-c{bottom:0}.final-cta>.crest-photo{width:80px;height:auto}}
 
 
+
+
+/* === Sistema de movimento BAEP — versão cinematográfica === */
+.boot-screen{position:fixed;inset:0;z-index:9999;display:grid;place-content:center;place-items:center;background:#030609;color:#eef3f6;overflow:hidden;transition:opacity .7s ease,visibility .7s ease}
+.boot-screen.is-done{opacity:0;visibility:hidden;pointer-events:none}
+.boot-grid{position:absolute;inset:-20%;background-image:linear-gradient(rgba(22,133,229,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(22,133,229,.08) 1px,transparent 1px);background-size:58px 58px;transform:perspective(600px) rotateX(60deg);animation:bootGrid 2.4s ease-out both}
+.boot-screen:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(22,133,229,.1),transparent);transform:translateX(-100%);animation:bootScan 1.5s .25s ease-in-out both}
+.boot-emblem{position:relative;width:92px;z-index:2;animation:bootEmblem 1s .15s cubic-bezier(.2,.9,.2,1) both}
+.boot-emblem .crest-photo{width:92px!important}
+.boot-copy{position:relative;z-index:2;display:grid;text-align:center;margin-top:24px;letter-spacing:.2em}
+.boot-copy span{font-size:9px;color:#778995}
+.boot-copy strong{font-size:clamp(18px,3vw,31px);margin:10px 0;color:white;text-shadow:0 0 26px rgba(22,133,229,.35);animation:bootText .6s .65s both}
+.boot-copy small{font-size:7px;color:#d6b871}
+.boot-progress{position:relative;z-index:2;width:min(310px,72vw);height:2px;margin-top:28px;background:#19232a;overflow:hidden}
+.boot-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#e9eef1,var(--red));box-shadow:0 0 15px var(--blue);animation:bootProgress 2.2s .1s ease-out both}
+.boot-screen button{position:absolute;right:28px;bottom:24px;color:#75838d;background:transparent;border:0;font-size:7px;letter-spacing:.18em;cursor:pointer;padding:12px}
+.particles{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.particles i{--x:calc((var(--particle) * 47) % 100);position:absolute;left:calc(var(--x) * 1%);bottom:-15px;width:2px;height:2px;border-radius:50%;background:#6ab8f4;opacity:.18;box-shadow:0 0 8px currentColor;animation:particleRise calc(13s + (var(--particle) * .55s)) linear infinite;animation-delay:calc(var(--particle) * -.8s)}
+.particles i:nth-child(3n){background:#e31b34;width:3px;height:3px;opacity:.12}
+.particles i:nth-child(4n){width:1px;height:24px;border-radius:0;background:linear-gradient(transparent,#1685e5)}
+.reveal-section{position:relative;isolation:isolate}
+.reveal-section:before{content:'';position:absolute;z-index:20;pointer-events:none;inset:0;background:linear-gradient(90deg,transparent,rgba(22,133,229,.18),rgba(227,27,52,.12),transparent);transform:translateX(-115%);opacity:0}
+.reveal-section.is-visible:before{animation:sectionSweep 1.15s .1s ease-out both}
+.crest-wrap{animation:crestFloat 5s ease-in-out infinite!important}
+.crest-wrap>.crest-photo img{animation:crestCinematic 5s ease-in-out infinite!important;transform-origin:50% 55%;backface-visibility:visible!important}
+.crest-wrap:before{content:'';position:absolute;inset:-18px;border:1px solid rgba(22,133,229,.2);clip-path:polygon(0 0,22% 0,22% 1px,1px 1px,1px 22%,0 22%,0 0,100% 0,100% 22%,calc(100% - 1px) 22%,calc(100% - 1px) 1px,78% 1px,78% 0,100% 0,100% 100%,78% 100%,78% calc(100% - 1px),calc(100% - 1px) calc(100% - 1px),calc(100% - 1px) 78%,100% 78%,100% 100%,0 100%,0 78%,1px 78%,1px calc(100% - 1px),22% calc(100% - 1px),22% 100%);animation:hudPulse 3s ease-in-out infinite}
+.structure .leader{opacity:0;transform:translateY(34px) scale(.97)}
+.structure.is-visible .leader{animation:rankIn .7s cubic-bezier(.2,.85,.2,1) forwards}
+.structure.is-visible .leader:nth-child(2){animation-delay:.12s}.structure.is-visible .leader:nth-child(3){animation-delay:.24s}.structure.is-visible .leader:nth-child(4){animation-delay:.36s}.structure.is-visible .leader:nth-child(5){animation-delay:.48s}
+.structure.is-visible .command-grid:after{content:'';position:absolute;left:4%;right:4%;top:5px;height:1px;background:linear-gradient(90deg,var(--blue),#d7b46c,var(--red));transform-origin:left;animation:commandLine 1.5s .2s ease-out both}
+.command-grid{position:relative}
+.map-ring{animation:radarExpand 4.5s ease-out infinite!important}
+.ring-two{animation-delay:2.25s!important}
+.map-node i{animation:nodePulse 1.8s ease-in-out infinite}
+.map-command:after{content:'';position:absolute;inset:-12px;border:1px solid rgba(22,133,229,.18);animation:commandPulse 2.8s ease-in-out infinite}
+.ops-map:after{content:'';position:absolute;left:50%;top:50%;width:52%;height:1px;transform-origin:left;background:linear-gradient(90deg,rgba(22,133,229,.8),transparent);animation:radarSweep 5s linear infinite;pointer-events:none}
+.training-system .flow-item{opacity:0;transform:translateX(-18px)}
+.training-system.is-visible .flow-item{animation:flowIn .55s ease-out forwards}
+.training-system.is-visible .flow-item:nth-child(2){animation-delay:.12s}.training-system.is-visible .flow-item:nth-child(3){animation-delay:.24s}.training-system.is-visible .flow-item:nth-child(4){animation-delay:.36s}.training-system.is-visible .flow-item:nth-child(5){animation-delay:.48s}
+.training-system.is-visible .training-flow:after{content:'';position:absolute;left:30px;right:30px;bottom:0;height:2px;background:linear-gradient(90deg,var(--blue),#d7b46c,var(--red));transform-origin:left;animation:commandLine 2s .4s ease-out both}
+.training-flow{position:relative;overflow:hidden}
+.count-up{font-variant-numeric:tabular-nums;text-shadow:0 0 24px rgba(22,133,229,.3)}
+.primary,.nav-cta,.secondary,.courses article,.tilt-card{position:relative;overflow:hidden}
+.primary:after,.nav-cta:after,.secondary:after,.courses article:after,.tilt-card:after{content:'';position:absolute;top:-80%;left:-45%;width:24%;height:260%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);transform:rotate(18deg);transition:left .65s ease;pointer-events:none}
+.primary:hover:after,.nav-cta:hover:after,.secondary:hover:after,.courses article:hover:after,.tilt-card:hover:after{left:125%}
+.tilt-card:active,.courses article:active{transform:translateY(-5px) scale(.99);border-color:rgba(22,133,229,.55)}
+@keyframes bootGrid{from{opacity:0;transform:perspective(600px) rotateX(60deg) translateY(120px)}to{opacity:1;transform:perspective(600px) rotateX(60deg) translateY(0)}}@keyframes bootScan{to{transform:translateX(100%)}}@keyframes bootEmblem{from{opacity:0;transform:scale(.55);filter:blur(8px)}to{opacity:1;transform:scale(1);filter:none}}@keyframes bootText{from{opacity:0;letter-spacing:.45em}to{opacity:1;letter-spacing:.2em}}@keyframes bootProgress{from{width:0}to{width:100%}}@keyframes particleRise{0%{transform:translateY(0);opacity:0}15%{opacity:.18}85%{opacity:.12}100%{transform:translateY(-110vh);opacity:0}}@keyframes sectionSweep{0%{transform:translateX(-115%);opacity:0}20%{opacity:1}100%{transform:translateX(115%);opacity:0}}@keyframes crestFloat{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(var(--parallax-x,0),-11px,0)}}@keyframes crestCinematic{0%,100%{transform:scale(1);filter:drop-shadow(0 20px 32px rgba(0,0,0,.78))}50%{transform:scale(1.025);filter:drop-shadow(-9px 0 20px rgba(22,133,229,.25)) drop-shadow(9px 0 20px rgba(227,27,52,.18))}}@keyframes hudPulse{50%{opacity:.35;transform:scale(1.025)}}@keyframes rankIn{to{opacity:1;transform:none}}@keyframes commandLine{from{transform:scaleX(0)}to{transform:scaleX(1)}}@keyframes radarExpand{0%{transform:translate(-50%,-50%) scale(.35);opacity:.7}100%{transform:translate(-50%,-50%) scale(1.15);opacity:0}}@keyframes nodePulse{50%{transform:scale(1.55);box-shadow:0 0 22px currentColor}}@keyframes commandPulse{50%{transform:scale(1.06);opacity:.35}}@keyframes radarSweep{to{transform:rotate(360deg)}}@keyframes flowIn{to{opacity:1;transform:none}}
+@media(max-width:900px){.boot-screen button{right:12px;bottom:12px}.particles i:nth-child(even){display:none}.reveal-section:before{display:none}.structure .leader,.training-system .flow-item{opacity:1;transform:none}.structure.is-visible .leader,.training-system.is-visible .flow-item{animation:none}.ops-map:after{width:44%}}
+@media(prefers-reduced-motion:reduce){.boot-screen{display:none}.particles{display:none}.crest-wrap,.crest-wrap>.crest-photo img,.map-ring,.map-node i,.map-command:after,.ops-map:after{animation:none!important}.structure .leader,.training-system .flow-item{opacity:1;transform:none}.reveal-section:before{display:none}}
