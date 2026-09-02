@@ -1,4 +1,5 @@
 'use client';
+import CategoryBriefing from './category-briefing';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -109,6 +110,7 @@ export default function Home() {
   useEffect(() => {
     const bootTimer = window.setTimeout(() => setBooting(false), 4200);
     const progressTimer = window.setInterval(() => setBootProgress((value) => Math.min(100, value + 1)), 38);
+    const stopProgress = window.setTimeout(() => window.clearInterval(progressTimer), 4200);
     const clockTimer = window.setInterval(() => setClock(new Date().toLocaleTimeString('pt-BR')), 1000);
     let frame = 0;
     const move = (event: PointerEvent) => {
@@ -159,6 +161,7 @@ export default function Home() {
     window.addEventListener('pointermove', move, { passive: true });
     return () => {
       window.clearTimeout(bootTimer);
+      window.clearTimeout(stopProgress);
       window.clearInterval(progressTimer);
       window.clearInterval(clockTimer);
       cancelAnimationFrame(frame);
@@ -184,7 +187,8 @@ export default function Home() {
           <div className="boot-seal"><div className="seal-ring seal-ring-a" /><div className="seal-ring seal-ring-b" /><Crest /><span>DISCIPLINA · PREPARO · PRESENÇA</span></div>
           <div className="boot-v2-copy"><small>PROJETO DE IMPLANTAÇÃO / BAEP</small><h2>UMA UNIDADE.<br/><em>UM COMPROMISSO.</em></h2><p>Conheça a estrutura, a formação e a proposta de atuação do 18º BPM/M — Virtual.</p><div className="boot-facts"><div><b>07</b><span>MÓDULOS DO PROJETO</span></div><div><b>12</b><span>CURSOS NA MATRIZ</span></div><div><b>16</b><span>NOMES NA HIERARQUIA</span></div></div></div>
         </div>
-        <div className="boot-v2-bottom"><div className="boot-chapters">{['IDENTIDADE','ESTRUTURA','FORMAÇÃO','APRESENTAÇÃO'].map((label,i)=><span key={label} className={bootProgress >= i*25 ? 'reached' : ''}><b>0{i+1}</b>{label}</span>)}</div><div className="intro-track"><i style={{width:bootProgress+'%'}} /></div><div className="intro-caption"><span>SEQUÊNCIA DE ABERTURA</span><b>{bootProgress}%</b><span>PROJETO VIRTUAL INDEPENDENTE</span></div></div>
+        <div className="boot-dossier"><div className="boot-dossier-label"><span>CONTEÚDO DA APRESENTAÇÃO</span><b>18 / BAEP</b></div><div className="boot-module-map">{categories.map((item,i)=><span key={item.id} className={bootProgress >= i * 14 ? 'revealed' : ''}><b>{item.code}</b>{item.label}<i /></span>)}</div><p>ESTRUTURA · PROGRAMAS · FORMAÇÃO · GESTÃO · IMPLANTAÇÃO</p></div>
+        <div className="boot-v2-bottom"><div className="boot-chapters">{['IDENTIDADE','ESTRUTURA','FORMAÇÃO','APRESENTAÇÃO'].map((label,i)=><span key={label} className={bootProgress >= i*25 ? 'reached' : ''}><b>0{i+1}</b>{label}</span>)}</div><div className="intro-track"><i style={{width:bootProgress+'%'}} /></div><div className="intro-caption"><span>APRESENTAÇÃO VISUAL</span><b>{bootProgress}%</b><span>PROJETO VIRTUAL INDEPENDENTE</span></div></div>
         <button className="boot-skip" onClick={() => setBooting(false)}>ENTRAR NO PROJETO <span>↗</span></button>
       </div>
       <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
@@ -229,6 +233,7 @@ export default function Home() {
       </section>
       <section className="ticker" aria-label="Pilares da unidade"><div>DISCIPLINA <b>✦</b> PREPARO <b>✦</b> PRESENÇA <b>✦</b> EXCELÊNCIA OPERACIONAL <b>✦</b> DISCIPLINA <b>✦</b> PREPARO</div></section>
       <section className="module-launcher"><header><p className="kicker">EXPLORE POR CATEGORIA</p><h2>ACESSO DIRETO<br/><em>AO PROJETO.</em></h2><p>Escolha uma área. Cada módulo reúne uma parte da proposta, sem precisar percorrer todo o site.</p></header><div>{categories.slice(1).map(item => <a href={'#' + item.id} key={item.id}><span>{item.code} / {item.icon}</span><h3>{item.label}</h3><p>{item.description}</p><b>ABRIR MÓDULO ↗</b></a>)}</div></section>
+      <CategoryBriefing category="inicio" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'projeto'} role="region" aria-label="Projetos">
       <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios operacionais da cidade que receberá a unidade.</p></section>
@@ -247,6 +252,7 @@ export default function Home() {
         ].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><i>↗</i></article>)}</div>
         <div className="project-promise"><span>COMPROMISSO DO 18º BPM/M</span><strong>ENTREGAR UMA UNIDADE ORGANIZADA, CAPACITADA, AVALIÁVEL E PRONTA PARA EVOLUIR.</strong></div>
       </section>
+      <CategoryBriefing category="projeto" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'operacao'} role="region" aria-label="Atuação">
       <section className="operations" id="operacao">
@@ -273,6 +279,7 @@ export default function Home() {
         ].map(([t,v,d],i)=><article key={t}><span>0{i+1}</span><small>{t}</small><b>{v}</b><p>{d}</p><i /></article>)}</div>
         <div className="workflows">{[['BRIEFING','Antes de cada ciclo','Objetivos, equipes, comunicação e responsabilidades definidos pelo comando.'],['PRESENÇA','Durante a atuação','Equipes distribuídas por setores com coordenação, disciplina e comunicação contínua.'],['DEBRIEFING','Após cada ciclo','Registro dos resultados, revisão das decisões e plano de melhoria para a próxima atuação.']].map(([t,s,d],i)=><article key={t}><b>0{i+1}</b><small>{s}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
       </section>
+      <CategoryBriefing category="operacao" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'estrutura'} role="region" aria-label="Hierarquia">
       <section className="structure" id="estrutura">
@@ -288,6 +295,7 @@ export default function Home() {
           {[['✯','ASP PM','VITOR'],['❯❯ ❯❯❯','1º SGT PM','DEREK OLIVEIRA'],['❯❯ ❯❯❯','1º SGT PM','VITOR HUGO'],['❯❯❯','3º SGT PM','JOTA BUENO'],['◊❯❯','ALN SGT PM','ARTHUR PORTELLA'],['❯❯','CB PM','MARCOS SILVA'],['❯❯','CB PM','FELIPE ALMEIDA'],['❯❯','CB PM','MAYCON RIOS'],['❯','SD PM','JOAO CAVALCANTE'],['❯','SD PM','MATHEUS SILVA'],['❯','SD PM','BIREL COSTA']].map(([s,r,n],i)=><div className="roster-row" key={n}><b>{String(i+6).padStart(2,'0')}</b><span>{s}</span><small>{r}</small><strong>{n}</strong><i>ATIVO</i></div>)}
         </div>
       </section>
+      <CategoryBriefing category="estrutura" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'formacao'} role="region" aria-label="Cursos">
       <section className="academy" id="formacao">
@@ -312,6 +320,7 @@ export default function Home() {
         </div>
         <div className="training-flow">{[['01','INSCRIÇÃO','Pré-requisitos'],['02','INSTRUÇÃO','Teoria orientada'],['03','SIMULAÇÃO','Prática supervisionada'],['04','AVALIAÇÃO','Critérios objetivos'],['05','CERTIFICAÇÃO','Registro e validade']].map(([n,t,d],i)=><div className="flow-item" key={n}><span>{n}</span><b>{t}</b><small>{d}</small>{i<4&&<i>→</i>}</div>)}</div>
       </section>
+      <CategoryBriefing category="formacao" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'gestao'} role="region" aria-label="Gestão">
       <section className="governance">
@@ -322,6 +331,7 @@ export default function Home() {
         <header><p className="kicker">PAINEL DE PRONTIDÃO</p><h2>O QUE VAMOS<br/><em>ACOMPANHAR.</em></h2></header>
         <div className="indicator-grid">{[['01','EFETIVO','Presença, disponibilidade e distribuição por função.','100%'],['02','FORMAÇÃO','Cursos concluídos, avaliações e reciclagens.','12 trilhas'],['03','DISCIPLINA','Pontualidade, registros e cumprimento dos padrões.','Contínuo'],['04','OPERAÇÃO','Planejamento executado e relatórios finalizados.','Por ciclo'],['05','LIDERANÇA','Feedback, evolução e desenvolvimento do efetivo.','Mensal'],['06','QUALIDADE','Lições aprendidas e ações de melhoria implementadas.','Semanal']].map(([n,t,d,v])=><article key={n}><span>{n}</span><h3>{t}</h3><strong>{v}</strong><p>{d}</p><div><i/></div></article>)}</div>
       </section>
+      <CategoryBriefing category="gestao" />
           </div>
           <div className="category-panel" hidden={activeCategory !== 'implantacao'} role="region" aria-label="Implantação">
       <section className="readiness-system">
@@ -349,6 +359,7 @@ export default function Home() {
         <div className="timeline"><div className="progress-line" />{[['FASE 01','ESTRUTURAÇÃO','Definição de comando, funções, normas e identidade da unidade.'],['FASE 02','CAPACITAÇÃO','Ciclo intensivo de cursos, instruções e exercícios integrados.'],['FASE 03','VALIDAÇÃO','Avaliações técnicas, simulações e certificação do efetivo.'],['FASE 04','ATIVAÇÃO','Início das operações com acompanhamento e melhoria contínua.']].map(([f,t,d],i)=><article key={f}><div className="phase-dot">{i+1}</div><small>{f}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
         <div className="final-cta"><Crest/><div><small>18º BPM/M – VIRTUAL</small><h2>DISCIPLINA. PREPARO.<br/>PRESENÇA.</h2><p>Projeto geral · Implantação BAEP</p></div><a href="#inicio">VOLTAR AO TOPO ↑</a></div>
       </section>
+      <CategoryBriefing category="implantacao" />
           </div>
         </div>
         <nav className="module-pagination" aria-label="Navegar entre categorias"><button disabled={activeIndex === 0} onClick={() => switchCategory(categories[activeIndex - 1].id, true)}><span>←</span><div><small>ANTERIOR</small><b>{categories[activeIndex - 1]?.label || 'Você está no início'}</b></div></button><span>{currentCategory.code} / 07</span><button disabled={activeIndex === categories.length - 1} onClick={() => switchCategory(categories[activeIndex + 1].id, true)}><div><small>PRÓXIMO</small><b>{categories[activeIndex + 1]?.label || 'Último módulo'}</b></div><span>→</span></button></nav>

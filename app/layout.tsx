@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import './modules.css';
 import './enhancements.css';
+import './expansion.css';
 
 export const metadata: Metadata = {
   title: 'Projeto BAEP | 18º BPM/M – Virtual',
