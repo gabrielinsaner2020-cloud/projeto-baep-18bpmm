@@ -22,7 +22,7 @@ const initialPhotos: GalleryPhoto[] = [
   ['07-equipe-em-posicionamento.jpg','Equipe em posicionamento coordenado','Organização visual da equipe e das viaturas, demonstrando união, preparo e identidade institucional.'],
   ['08-patrulhamento-integrado.jpg','Patrulhamento integrado e mobilidade','Integração entre equipe, viatura e motocicletas para ampliar mobilidade e presença durante as atividades virtuais.'],
   ['09-mobilidade-noturna.jpg','Mobilidade noturna sobre duas rodas','Registro da unidade de motocicletas em atividade noturna, com foco em mobilidade, integração e presença.'],
-].map(([file,title,description]) => ({ pathname:`initial/${file}`, title, description, uploadedAt:'', image:`/gallery/${file}`, initial:true }));
+].map(([file,title,description]) => ({ pathname:`initial/${file}`, title, description, uploadedAt:'', image:`/gallery/${file}?v=20260902-hq2`, initial:true }));
 
 export default function GallerySection() {
   const [photos, setPhotos] = useState<GalleryPhoto[]>(initialPhotos);
@@ -52,11 +52,11 @@ export default function GallerySection() {
   return <section className="gallery-section" id="galeria">
     <header className="section-head"><div><p className="kicker">REGISTROS DA UNIDADE</p><h2>GALERIA DE<br/><em>ATUAÇÃO VIRTUAL.</em></h2></div><p>Uma memória visual das atividades, formações e momentos que representam a identidade do 18º BPM/M — Virtual.</p></header>
     <div className="gallery-status"><span><i /> ACERVO INSTITUCIONAL</span><b>{String(photos.length).padStart(2, '0')} REGISTROS</b><a className="gallery-private" href="/admin"><i>⌾</i> ÁREA PRIVADA <strong>↗</strong></a></div>
-    {state === 'loading' && <div className="gallery-message"><i/><h3>CARREGANDO O ACERVO</h3><p>Sincronizando registros visuais...</p></div>}
-    {state === 'error' && <div className="gallery-message"><h3>ACERVO INDISPONÍVEL</h3><p>Não foi possível carregar as imagens agora.</p><button onClick={load}>TENTAR NOVAMENTE</button></div>}
+    {state === 'loading' && <div className="gallery-sync"><i/> SINCRONIZANDO NOVOS REGISTROS</div>}
+    {state === 'error' && <div className="gallery-sync warning">O acervo inicial está disponível. <button onClick={load}>TENTAR SINCRONIZAR NOVAMENTE</button></div>}
     {state === 'ready' && photos.length === 0 && <div className="gallery-message empty"><span>▣</span><h3>GALERIA EM PREPARAÇÃO</h3><p>Os primeiros registros serão publicados pelo administrador do projeto.</p></div>}
     {photos.length > 0 && <div className="gallery-grid">{photos.map((photo, index) => <figure key={photo.pathname}>
-      <button className="gallery-open" onClick={() => setSelected(index)} aria-label={`Abrir ${photo.title || 'registro'} em tela cheia`}><img src={photo.image} alt={photo.title || `Registro visual ${index + 1} do 18º BPM/M`} loading="lazy"/><span>AMPLIAR REGISTRO <b>↗</b></span></button>
+      <button className="gallery-open" onClick={() => setSelected(index)} aria-label={`Abrir ${photo.title || 'registro'} em tela cheia`}><img src={photo.image} alt={photo.title || `Registro visual ${index + 1} do 18º BPM/M`} loading={photo.initial ? 'eager' : 'lazy'} decoding="async" fetchPriority={index < 3 ? 'high' : 'auto'} onError={event => { const image=event.currentTarget; if(!image.dataset.retried){image.dataset.retried='true'; image.src=photo.image+(photo.image.includes('?')?'&':'?')+'retry=1';} }}/><span>AMPLIAR REGISTRO <b>↗</b></span></button>
       <figcaption><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{photo.title || 'REGISTRO DE ATUAÇÃO'}</h3><small>{photo.initial ? 'ACERVO INICIAL' : new Intl.DateTimeFormat('pt-BR').format(new Date(photo.uploadedAt))} · 18º BPM/M VIRTUAL</small></div></figcaption>
     </figure>)}</div>}
     {selected !== null && photos[selected] && createPortal(<div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label={photos[selected].title || 'Registro ampliado'} onMouseDown={event => { if(event.target === event.currentTarget) setSelected(null); }}>

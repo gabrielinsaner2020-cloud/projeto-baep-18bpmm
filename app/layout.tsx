@@ -6,6 +6,7 @@ import './expansion.css';
 import './playbook.css';
 import './transitions.css';
 import './secure-features.css';
+import './mobile-gallery.css';
 
 export const metadata: Metadata = {
   title: 'Projeto BAEP | 18º BPM/M – Virtual',
