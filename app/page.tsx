@@ -87,7 +87,7 @@ export default function Home() {
       requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
     };
     if (!animate || motionRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) apply();
-    else { setLeaving(true); transitionTimer.current = window.setTimeout(apply, 440); }
+    else { setLeaving(true); transitionTimer.current = window.setTimeout(apply, 720); }
   }, []);
   useEffect(() => {
     switchCategory(categoryFromHash(window.location.hash), false, false);
@@ -207,7 +207,13 @@ export default function Home() {
         <div className="module-sidebar-footer"><i /><span>PROJETO VIRTUAL<br/><b>NAVEGAÇÃO POR MÓDULOS</b></span></div>
       </aside>
       <div className="module-content">
-        <div className={`transition-veil ${leaving ? 'active' : ''}`} aria-hidden="true"><div className="transition-shutter shutter-left" /><div className="transition-shutter shutter-right" /><div className="transition-caption"><span>ABRINDO MÓDULO / {categories.find(item=>item.id===destination)?.code}</span><b>{categories.find(item=>item.id===destination)?.label}</b><i /></div></div>
+        <div key={destination} className={`transition-veil transit-console ${leaving ? 'active' : ''}`} aria-hidden="true">
+          <div className="transit-grid" /><div className="transition-shutter shutter-left" /><div className="transition-shutter shutter-right" /><div className="transit-scan" /><div className="transit-frame" />
+          <div className="transit-heading"><span>18º BPM/M · PROJETO BAEP</span><span>NAVEGAÇÃO / {categories.find(item=>item.id===destination)?.code}</span></div>
+          <div className="transit-watermark">{categories.find(item=>item.id===destination)?.code}</div>
+          <div className="transition-caption"><span>PRÓXIMA SEÇÃO</span><b>{categories.find(item=>item.id===destination)?.label}</b><p>{categories.find(item=>item.id===destination)?.description}</p><i /><div className="transit-sequence"><span>SELECIONAR</span><span>TRANSIÇÃO</span><span>EXPLORAR</span></div></div>
+          <div className="transit-route">{categories.map(item=><span key={item.id} className={item.id===destination?'target':''}><i /><b>{item.code}</b><small>{item.label}</small></span>)}</div>
+        </div>
         <div className="module-toolbar premium-toolbar">
           <div className="toolbar-title"><small>18º BPM/M <span>/</span> CENTRAL DO PROJETO</small><h2 ref={titleRef} tabIndex={-1}>{currentCategory.label}<span>.</span></h2><p>{currentCategory.description}</p></div>
           <div className="toolbar-index" aria-hidden="true"><span>MÓDULO</span><b>{currentCategory.code}</b><small>DE 07</small></div>
