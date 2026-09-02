@@ -25,22 +25,27 @@ export default function AdminPanel() {
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setMessage('');
-    const form = new FormData(event.currentTarget);
-    const response = await fetch('/api/admin/login', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ username:form.get('username'), password:form.get('password') }) });
-    const data = await response.json() as { error?: string }; setBusy(false);
-    if (!response.ok) return setMessage(data.error || 'Não foi possível entrar.');
-    event.currentTarget.reset(); setAuthenticated(true); void loadPhotos();
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
+    try {
+      const response = await fetch('/api/admin/login', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ username:form.get('username'), password:form.get('password') }) });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) return setMessage(data.error || 'Não foi possível entrar.');
+      formElement.reset(); setAuthenticated(true); void loadPhotos();
+    } catch { setMessage('A autenticação não respondeu. Atualize a página e tente novamente.'); }
+    finally { setBusy(false); }
   }
   async function upload(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setMessage('Preparando imagem...');
-    const form = new FormData(event.currentTarget); const original = form.get('file');
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement); const original = form.get('file');
     try {
       if (!(original instanceof File) || !original.size) throw new Error('Selecione uma imagem.');
       const file = await compressImage(original); if(file.size > 3_800_000) throw new Error('A imagem ficou maior que 3,8 MB. Escolha uma menor.');
       form.set('file', file); setMessage('Enviando para o acervo...');
       const response = await fetch('/api/gallery', { method:'POST', body:form }); const data = await response.json() as { error?: string };
       if(!response.ok) throw new Error(data.error || 'Falha no envio.');
-      event.currentTarget.reset(); await loadPhotos(); setMessage('Imagem publicada com sucesso.');
+      formElement.reset(); await loadPhotos(); setMessage('Imagem publicada com sucesso.');
     } catch(error) { setMessage(error instanceof Error ? error.message : 'Falha no envio.'); } finally { setBusy(false); }
   }
   async function remove(photo: GalleryPhoto) {
