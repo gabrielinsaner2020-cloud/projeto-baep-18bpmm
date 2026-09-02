@@ -1,3 +1,4 @@
+import ProjectPlaybook from './project-playbook';
 type Briefing = { title: string; intro: string; output: string; items: { title: string; text: string; steps: string[]; result: string }[] };
 
 export const briefings: Record<string, Briefing> = {
@@ -72,5 +73,6 @@ export default function CategoryBriefing({ category }: { category: string }) {
     <div className="briefing-body"><aside><span>PLANO PROPOSTO</span><b>{String(data.items.length).padStart(2, '0')}</b><p>frentes para explorar</p><small>Abra cada tópico para consultar a aplicação, as etapas e a entrega esperada.</small><div><i /> LEITURA POR TÓPICOS</div></aside>
       <div className="briefing-accordions">{data.items.map((item, i) => <details key={item.title} open={i === 0}><summary><span>{String(i + 1).padStart(2, '0')}</span><h3>{item.title}</h3><b aria-hidden="true">+</b></summary><div className="briefing-detail"><p>{item.text}</p><ol>{item.steps.map(step => <li key={step}>{step}</li>)}</ol><footer><span>ENTREGA ESPERADA</span><p>{item.result}</p></footer></div></details>)}</div>
     </div><div className="briefing-outcome"><span>COMPROMISSO DO MÓDULO</span><p>{data.output}</p></div>
+    <ProjectPlaybook category={category} />
   </section>;
 }
