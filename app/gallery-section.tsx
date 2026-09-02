@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export type GalleryPhoto = {
   pathname: string;
@@ -50,7 +51,7 @@ export default function GallerySection() {
 
   return <section className="gallery-section" id="galeria">
     <header className="section-head"><div><p className="kicker">REGISTROS DA UNIDADE</p><h2>GALERIA DE<br/><em>ATUAÇÃO VIRTUAL.</em></h2></div><p>Uma memória visual das atividades, formações e momentos que representam a identidade do 18º BPM/M — Virtual.</p></header>
-    <div className="gallery-status"><span><i /> ACERVO INSTITUCIONAL</span><b>{String(photos.length).padStart(2, '0')} REGISTROS</b><small>ATUALIZAÇÃO PELO PAINEL PRIVADO</small></div>
+    <div className="gallery-status"><span><i /> ACERVO INSTITUCIONAL</span><b>{String(photos.length).padStart(2, '0')} REGISTROS</b><a className="gallery-private" href="/admin"><i>⌾</i> ÁREA PRIVADA <strong>↗</strong></a></div>
     {state === 'loading' && <div className="gallery-message"><i/><h3>CARREGANDO O ACERVO</h3><p>Sincronizando registros visuais...</p></div>}
     {state === 'error' && <div className="gallery-message"><h3>ACERVO INDISPONÍVEL</h3><p>Não foi possível carregar as imagens agora.</p><button onClick={load}>TENTAR NOVAMENTE</button></div>}
     {state === 'ready' && photos.length === 0 && <div className="gallery-message empty"><span>▣</span><h3>GALERIA EM PREPARAÇÃO</h3><p>Os primeiros registros serão publicados pelo administrador do projeto.</p></div>}
@@ -58,8 +59,8 @@ export default function GallerySection() {
       <button className="gallery-open" onClick={() => setSelected(index)} aria-label={`Abrir ${photo.title || 'registro'} em tela cheia`}><img src={photo.image} alt={photo.title || `Registro visual ${index + 1} do 18º BPM/M`} loading="lazy"/><span>AMPLIAR REGISTRO <b>↗</b></span></button>
       <figcaption><span>{String(index + 1).padStart(2, '0')}</span><div><h3>{photo.title || 'REGISTRO DE ATUAÇÃO'}</h3><small>{photo.initial ? 'ACERVO INICIAL' : new Intl.DateTimeFormat('pt-BR').format(new Date(photo.uploadedAt))} · 18º BPM/M VIRTUAL</small></div></figcaption>
     </figure>)}</div>}
-    {selected !== null && photos[selected] && <div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label={photos[selected].title || 'Registro ampliado'} onMouseDown={event => { if(event.target === event.currentTarget) setSelected(null); }}>
+    {selected !== null && photos[selected] && createPortal(<div className="gallery-lightbox" role="dialog" aria-modal="true" aria-label={photos[selected].title || 'Registro ampliado'} onMouseDown={event => { if(event.target === event.currentTarget) setSelected(null); }}>
       <button className="lightbox-close" onClick={() => setSelected(null)} aria-label="Fechar imagem">×</button><div className="lightbox-frame"><div className="lightbox-visual"><img src={photos[selected].image} alt={photos[selected].title}/><span>18º BPM/M · REGISTRO {String(selected+1).padStart(2,'0')}</span></div><aside><small>ACERVO DE ATUAÇÃO VIRTUAL</small><b className="lightbox-number">{String(selected+1).padStart(2,'0')}<i>/{String(photos.length).padStart(2,'0')}</i></b><h2>{photos[selected].title || 'Registro de atuação'}</h2><p>{photos[selected].description || 'Registro visual publicado no acervo do projeto para apresentar parte das atividades desenvolvidas pela unidade virtual.'}</p><div><span><i/> IDENTIDADE</span><span><i/> PREPARO</span><span><i/> INTEGRAÇÃO</span></div><footer><button onClick={() => setSelected((selected-1+photos.length)%photos.length)}>← ANTERIOR</button><button onClick={() => setSelected((selected+1)%photos.length)}>PRÓXIMA →</button></footer></aside></div>
-    </div>}
+    </div>, document.body)}
   </section>;
 }
