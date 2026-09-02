@@ -21,7 +21,7 @@ export default function AdminPanel() {
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const loadPhotos = useCallback(async () => { const r = await fetch('/api/gallery', { cache:'no-store' }); if (r.ok) setPhotos(await r.json()); }, []);
-  useEffect(() => { fetch('/api/admin/status', { cache:'no-store' }).then(r=>r.json() as Promise<{authenticated:boolean}>).then(data=>{ setAuthenticated(data.authenticated); if(data.authenticated) void loadPhotos(); }).catch(()=>setAuthenticated(false)); }, [loadPhotos]);
+  useEffect(() => { setAuthenticated(false); }, []);
 
   async function login(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setBusy(true); setMessage('');
