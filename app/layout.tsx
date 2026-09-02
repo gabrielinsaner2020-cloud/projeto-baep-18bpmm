@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Projeto BAEP | 18º BPM/M – Virtual',
-  description: 'Plano de missão, estrutura de comando e implantação BAEP para a Grande São Paulo.',
+  description: 'Proposta do 18º BPM/M – Virtual para implantação BAEP: comando, formação e rotina de trabalho. Projeto independente, adaptável à comunidade de destino.',
 };
 
 export default function RootLayout({

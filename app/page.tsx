@@ -1,255 +1,72 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-function Crest() {
-  return (
-      <div className="crest-photo" aria-label="Brasão do 7º BAEP">
-        <img src="baep-crest-360-web.png" alt="Brasão do 7º BAEP — Ações Especiais" />
-    </div>
-  );
-}
-
-
-const operationalStages = [
-  { code:'01', title:'LEITURA DA CIDADE', label:'Diagnóstico territorial', description:'Organização das informações necessárias para compreender setores, horários, demandas recorrentes e prioridades da cidade de implantação.', bullets:['Divisão inicial por setores','Identificação de períodos prioritários','Levantamento de demandas recorrentes','Integração com as unidades existentes'], readiness:'92%', channel:'INTEL-01' },
-  { code:'02', title:'PLANEJAMENTO', label:'Construção do ciclo', description:'Transformação do diagnóstico em objetivos, responsabilidades, recursos necessários e critérios claros de acompanhamento.', bullets:['Objetivo principal definido','Responsáveis por cada entrega','Cronograma e pontos de controle','Critérios de sucesso documentados'], readiness:'88%', channel:'PLAN-02' },
-  { code:'03', title:'DISTRIBUIÇÃO DE EQUIPES', label:'Organização do efetivo', description:'Distribuição equilibrada das equipes conforme formação, função, disponibilidade e prioridade institucional.', bullets:['Funções e lideranças definidas','Equilíbrio entre setores','Comunicação padronizada','Reserva e substituições previstas'], readiness:'95%', channel:'CMD-03' },
-  { code:'04', title:'EXECUÇÃO COORDENADA', label:'Ativação controlada', description:'Início das atividades com comando presente, comunicação contínua e registro das decisões tomadas durante o ciclo.', bullets:['Briefing antes da ativação','Supervisão durante o ciclo','Atualização contínua do comando','Registro das ocorrências relevantes'], readiness:'90%', channel:'OPS-04' },
-  { code:'05', title:'RELATÓRIO E AVALIAÇÃO', label:'Aprendizado institucional', description:'Consolidação dos resultados, identificação de oportunidades e definição das melhorias para o próximo ciclo.', bullets:['Debriefing estruturado','Indicadores consolidados','Lições aprendidas registradas','Plano de melhoria aprovado'], readiness:'100%', channel:'QA-05' }
+const stages = [
+  { title: 'Alinhar antes de assumir', label: 'Preparação', text: 'A primeira conversa é com a administração. A proposta do 18º precisa caber nas regras, nos recursos e nas necessidades de quem recebe a unidade.', items: ['Definir atribuições e limites de atuação.', 'Confirmar recursos e disponibilidade do efetivo.', 'Registrar os pontos acordados com a administração.'], output: 'Plano de implantação alinhado entre as partes.' },
+  { title: 'Entrar em serviço com direção', label: 'Briefing', text: 'Antes de iniciar, a equipe precisa saber quem coordena, qual é sua função e como pedir apoio. O briefing reúne essas decisões em uma orientação objetiva.', items: ['Conferir presença e qualificação dos integrantes.', 'Distribuir funções e responsáveis pela supervisão.', 'Repassar prioridades e canais de comunicação.'], output: 'Equipe orientada e funções registradas.' },
+  { title: 'Trabalhar como uma unidade', label: 'Atuação', text: 'A proposta é manter supervisão presente e comunicação entre equipes. A unidade de motos integra o planejamento, sem funcionar como uma estrutura isolada.', items: ['Manter o comando informado das atividades.', 'Respeitar as regras e os limites acordados.', 'Registrar fatos relevantes para a revisão posterior.'], output: 'Atividades documentadas e acompanhamento pelo comando.' },
+  { title: 'Fechar o ciclo, corrigir o próximo', label: 'Revisão', text: 'Depois da atividade, o debriefing separa o que funcionou, o que precisa mudar e o que deve virar instrução. O registro serve para aprender, não para produzir números decorativos.', items: ['Ouvir os integrantes envolvidos.', 'Identificar dificuldades de comunicação e organização.', 'Definir uma melhoria com responsável e prazo.'], output: 'Relatório curto e ações de melhoria acompanháveis.' },
 ];
+
+const courses = [
+  { name: 'Modulação e B.O. PM', group: 'Fundamentos', hours: '4h', goal: 'Falar com clareza e registrar o que aconteceu.', impact: 'Melhora a passagem de informações e permite que outra equipe compreenda um registro sem depender de explicações adicionais.', entry: 'Integração inicial da unidade.', practice: 'Exercícios de rádio e elaboração de um boletim a partir de um cenário fictício.', assessment: 'Clareza, sequência dos fatos e preenchimento dos campos previstos.' },
+  { name: 'P.O.P. / Carceragem', group: 'Fundamentos', hours: '4h', goal: 'Conhecer responsabilidades e seguir uma sequência de registros.', impact: 'Evita improvisos administrativos e reforça o respeito às regras de custódia da comunidade.', entry: 'Modulação e B.O. PM.', practice: 'Simulação de conferência documental e passagem de responsabilidade, conforme as regras locais.', assessment: 'Completude dos registros e identificação do responsável por cada etapa.' },
+  { name: 'Abordagem e Posicionamento', group: 'Fundamentos', hours: '6h', goal: 'Priorizar verbalização, postura e coordenação em cenários virtuais.', impact: 'Ajuda o integrante a agir com respeito, controlar a comunicação e reconhecer os limites de sua função.', entry: 'Integração e regras locais concluídas.', practice: 'Cenários simulados de atendimento e tomada de decisão com acompanhamento do instrutor.', assessment: 'Respeito às regras, comunicação e justificativa das decisões.' },
+  { name: 'Direção Defensiva', group: 'Mobilidade', hours: '6h', goal: 'Conduzir com responsabilidade e reconhecer situações de risco.', impact: 'Reduz conduções imprudentes e melhora a organização dos deslocamentos da equipe.', entry: 'Integração e autorização interna de condução.', practice: 'Percursos simulados com avaliação de atenção, prevenção e cuidado com outros participantes.', assessment: 'Condução segura e respeito às regras de trânsito da comunidade.' },
+  { name: 'TAT I', group: 'Progressão', hours: '8h', goal: 'Construir uma base comum de trabalho em equipe.', impact: 'Estabelece linguagem, responsabilidades e hábitos de comunicação compartilhados.', entry: 'Módulos fundamentais concluídos.', practice: 'Exercícios virtuais de cooperação com funções previamente distribuídas.', assessment: 'Disciplina, comunicação e cumprimento da função atribuída.' },
+  { name: 'TAT II', group: 'Progressão', hours: '8h', goal: 'Integrar equipes em situações simuladas com mais variáveis.', impact: 'Aprimora a leitura conjunta de uma situação e a capacidade de ajustar decisões sem perder a organização.', entry: 'TAT I aprovado.', practice: 'Simulações de coordenação e resolução de problemas com feedback ao final.', assessment: 'Integração, comunicação e coerência das decisões.' },
+  { name: 'TAT III', group: 'Progressão', hours: '10h', goal: 'Desenvolver supervisão e liderança de equipe.', impact: 'Prepara lideranças para orientar, acompanhar e corrigir o trabalho sem concentrar todas as tarefas.', entry: 'TAT II aprovado e indicação para desenvolvimento de liderança.', practice: 'Planejamento de uma atividade simulada, briefing e condução de debriefing.', assessment: 'Clareza da orientação, acompanhamento e qualidade do feedback.' },
+  { name: 'SAT-A', group: 'Especialização', hours: '6h', goal: 'Reforçar competências que precisam de prática acompanhada.', impact: 'Transforma dificuldades observadas em objetivos individuais de desenvolvimento.', entry: 'Base concluída; conteúdo específico a validar pela instrução.', practice: 'Estações formativas adaptadas às necessidades identificadas nas avaliações.', assessment: 'Evolução em relação aos objetivos definidos para o participante.' },
+  { name: 'SAT-B', group: 'Especialização', hours: '8h', goal: 'Consolidar o aprendizado em uma avaliação integrada.', impact: 'Verifica se o integrante mantém consistência ao combinar diferentes competências.', entry: 'SAT-A aprovado; ementa a validar pela instrução.', practice: 'Cenário virtual integrado com critérios apresentados antes da avaliação.', assessment: 'Consistência, comunicação e respeito aos procedimentos acordados.' },
+  { name: 'CFC', group: 'Liderança', hours: '12h', goal: 'Desenvolver liderança, instrução e acompanhamento de pessoas.', impact: 'Ajuda futuros responsáveis a organizar escalas, orientar integrantes e acompanhar a evolução da equipe.', entry: 'Indicação do comando e histórico formativo analisado.', practice: 'Preparar uma instrução curta, organizar uma escala e realizar feedback orientado.', assessment: 'Organização, qualidade da instrução e postura na gestão de pessoas.' },
+  { name: 'Pelotão RPM / ROCAM', group: 'Mobilidade', hours: '8h', goal: 'Integrar a unidade de motocicletas ao restante do batalhão.', impact: 'Organiza comunicação, responsabilidades e participação do pelotão nas atividades previstas.', entry: 'Direção Defensiva e seleção interna da unidade de motos.', practice: 'Atividades virtuais de condução responsável, comunicação e coordenação do grupo.', assessment: 'Segurança na condução e integração com os demais participantes.' },
+  { name: 'Comandante RPM / ROCAM', group: 'Liderança', hours: '10h', goal: 'Preparar quem vai organizar e acompanhar o pelotão.', impact: 'Torna explícitas as responsabilidades da liderança pela formação e pelo acompanhamento de seus integrantes.', entry: 'Formação do pelotão e indicação do comando.', practice: 'Elaborar plano de instrução, distribuir responsabilidades e conduzir uma revisão de atividade.', assessment: 'Planejamento, supervisão e clareza do relatório final.' },
+];
+const command = [
+  ['TEN-CEL', 'Rafael Aguiar', 'Responsável geral', 'Direção do projeto, alinhamento com a administração e validação das decisões da unidade.'],
+  ['MAJ PM', 'Jeraldo', 'Subcomando', 'Coordenação interna e acompanhamento das atividades em apoio ao comando geral.'],
+  ['CAP PM', 'Gabriel Santos', 'Recursos humanos', 'Organização do efetivo, disponibilidade, registros e acompanhamento dos integrantes.'],
+  ['1º TEN PM', 'Valdir', 'Oficial', 'Integra a cadeia de comando. Atribuições específicas definidas pelo comando geral.'],
+  ['2º TEN PM', 'H. Smith', 'Unidade de motos', 'Organização do pelotão, formação específica e integração com o restante da unidade.'],
+];
+const roster = [['ASP PM','Vitor'],['1º SGT PM','Derek Oliveira'],['1º SGT PM','Vitor Hugo'],['3º SGT PM','Jota Bueno'],['ALN SGT PM','Arthur Portella'],['CB PM','Marcos Silva'],['CB PM','Felipe Almeida'],['CB PM','Maycon Rios'],['SD PM','Joao Cavalcante'],['SD PM','Matheus Silva'],['SD PM','Birel Costa']];
+const groups = ['Todos', 'Fundamentos', 'Progressão', 'Mobilidade', 'Especialização', 'Liderança'];
+
+function Crest({ className = '' }: { className?: string }) {
+  return <img className={`crest ${className}`} src="./baep-crest-360-web.png" alt="Brasão BAEP — Ações Especiais" width="631" height="595" />;
+}
+function SectionHeading({ number, label, title, children }: { number: string; label: string; title: string; children?: React.ReactNode }) {
+  return <header className="section-heading"><div><span className="eyebrow">{number} / {label}</span><h2>{title}</h2></div>{children && <p>{children}</p>}</header>;
+}
 
 export default function Home() {
   const [menu, setMenu] = useState(false);
-  const [booting, setBooting] = useState(true);
-  const [bootProgress, setBootProgress] = useState(0);
-  const [activeOperation, setActiveOperation] = useState(0);
-  const [clock, setClock] = useState('00:00:00');
-  useEffect(() => {
-    const bootTimer = window.setTimeout(() => setBooting(false), 4200);
-    const progressTimer = window.setInterval(() => setBootProgress((value) => Math.min(100, value + 1)), 38);
-    const clockTimer = window.setInterval(() => setClock(new Date().toLocaleTimeString('pt-BR')), 1000);
-    let frame = 0;
-    const move = (event: PointerEvent) => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const x = event.clientX / window.innerWidth - 0.5;
-        const y = event.clientY / window.innerHeight - 0.5;
-        const root = document.documentElement.style;
-        root.setProperty('--mx', `${event.clientX}px`);
-        root.setProperty('--my', `${event.clientY}px`);
-        root.setProperty('--parallax-x', `${x * 18}px`);
-        root.setProperty('--parallax-y', `${y * 14}px`);
-        root.setProperty('--tilt-x', `${y * -4}deg`);
-        root.setProperty('--tilt-y', `${x * 6}deg`);
-      });
-    };
-    const sections = document.querySelectorAll<HTMLElement>('main > section:not(.hero)');
-    sections.forEach((section) => section.classList.add('reveal-section'));
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08 });
-    sections.forEach((section) => observer.observe(section));
-    const counters = document.querySelectorAll<HTMLElement>('[data-count]');
-    const countObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const element = entry.target as HTMLElement;
-        const target = Number(element.dataset.count || 0);
-        const suffix = element.dataset.suffix || '';
-        const started = performance.now();
-        const duration = 1400;
-        const animate = (now: number) => {
-          const progress = Math.min((now - started) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          element.textContent = String(Math.round(target * eased)).padStart(target < 10 ? 2 : 1, '0') + suffix;
-          if (progress < 1) requestAnimationFrame(animate);
-        };
-        requestAnimationFrame(animate);
-        countObserver.unobserve(element);
-      });
-    }, { threshold: 0.5 });
-    counters.forEach((counter) => countObserver.observe(counter));
-    window.addEventListener('pointermove', move, { passive: true });
-    return () => {
-      window.clearTimeout(bootTimer);
-      window.clearInterval(progressTimer);
-      window.clearInterval(clockTimer);
-      cancelAnimationFrame(frame);
-      window.removeEventListener('pointermove', move);
-      observer.disconnect();
-      countObserver.disconnect();
-    };
-  }, []);
-  return (
-    <main>
-      <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
-        <div className="boot-grid" /><div className="boot-noise" /><div className="boot-scanline" />
-        <div className="boot-corner boot-corner-a">SYS / 18-BPMM</div><div className="boot-corner boot-corner-b">PROTOCOLO BAEP</div>
-        <div className="boot-status"><i /> CONEXÃO SEGURA <span>ONLINE</span></div>
-        <div className="boot-stage">
-          <div className="boot-telemetry left"><span>COMANDO</span><b>VALIDADO</b><span>EFETIVO</span><b>SINCRONIZADO</b><span>DOUTRINA</span><b>CARREGADA</b></div>
-          <div className="boot-emblem"><div className="boot-ring ring-a" /><div className="boot-ring ring-b" /><Crest /></div>
-          <div className="boot-telemetry right"><span>IDENTIDADE</span><b>18º BPM/M</b><span>PROJETO</span><b>BAEP</b><span>STATUS</span><b>PRONTO</b></div>
-        </div>
-        <div className="boot-copy"><span>18º BATALHÃO DE POLÍCIA MILITAR METROPOLITANO</span><strong>CENTRAL DE IMPLANTAÇÃO</strong><small>INICIALIZANDO PROJETO INSTITUCIONAL BAEP</small></div>
-        <div className="boot-steps"><span>01 VALIDANDO IDENTIDADE</span><span>02 SINCRONIZANDO COMANDO</span><span>03 CARREGANDO DOUTRINA</span><span>04 SISTEMA PRONTO</span></div>
-        <div className="boot-terminal"><span><i /> identidade_18bpmm: validada</span><span><i /> cadeia_comando: sincronizada</span><span><i /> matriz_formacao: carregada</span><span><i /> protocolo_implantacao: ativo</span></div>
-        <div className="boot-wave"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
-        <div className="boot-progress"><i style={{ width: `${bootProgress}%` }} /></div>
-        <div className="boot-progress-label"><span>CARREGAMENTO OPERACIONAL</span><b>{bootProgress}%</b></div>
-        <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
-      </div>
-      <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
-      <div className="cursor-glow" aria-hidden="true" />
-      <nav className="nav">
-        <a className="brand" href="#inicio"><Crest /><span><b>18º BPM/M</b><small>PROJETO BAEP</small></span></a>
-        <button className="menu-button" onClick={() => setMenu(!menu)} aria-label="Abrir menu" aria-expanded={menu}><span /><span /></button>
-        <div className={`links ${menu ? 'open' : ''}`}><a href="#projeto">O projeto</a><a href="#operacao">Atuação</a><a href="#estrutura">Estrutura</a><a href="#formacao">Formação</a><a href="#implantacao">Implantação</a></div>
-        <a className="nav-cta" href="#estrutura">Conheça a unidade <span>↗</span></a>
-      </nav>
-      <section className="hero" id="inicio">
-        <div className="grid-lines" aria-hidden="true" /><div className="scan" aria-hidden="true" />
-        <div className="hero-copy">
-          <div className="eyebrow"><span className="pulse" /> Projeto institucional · Implantação BAEP</div>
-          <h1>PRONTOS PARA<br /><strong>O PRÓXIMO NÍVEL.</strong></h1>
-          <p>Uma proposta de excelência, disciplina e preparo para a implantação de uma unidade de ações especiais conduzida pelo 18º BPM/M – Virtual.</p>
-          <div className="hero-actions"><a className="primary" href="#projeto">Explorar o projeto <span>→</span></a><a className="secondary" href="#estrutura"><i className="play">▶</i> Ver estrutura</a></div>
-        </div>
-        <div className="hero-visual" aria-hidden="true">
-          <div className="hud-corner top-left" /><div className="hud-corner bottom-right" /><div className="crest-wrap"><div className="crest-aura" /><Crest /></div>
-          <div className="datum datum-a"><span>COMANDO</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>DESTINO DO PROJETO</span><b>CIDADE DE IMPLANTAÇÃO</b></div><div className="datum datum-c"><span>STATUS</span><b><i /> PRONTO PARA IMPLANTAÇÃO</b></div>
-        </div>
-        <div className="hero-index"><span>01</span><div /><small>VISÃO ESTRATÉGICA</small></div><div className="scroll-cue"><span>SCROLL PARA EXPLORAR</span><i>↓</i></div>
-      </section>
-      <section className="ticker" aria-label="Pilares da unidade"><div>DISCIPLINA <b>✦</b> PREPARO <b>✦</b> PRESENÇA <b>✦</b> EXCELÊNCIA OPERACIONAL <b>✦</b> DISCIPLINA <b>✦</b> PREPARO</div></section>
-      <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios operacionais da cidade que receberá a unidade.</p></section>
-      <section className="pillars">
-        {[['01','PRESENÇA','Atuação coordenada, pronta resposta e domínio territorial.'],['02','PREPARO','Formação contínua, doutrina e avaliação técnica.'],['03','DISCIPLINA','Comando presente, procedimentos claros e padrão elevado.'],['04','INOVAÇÃO','Tecnologia aplicada à gestão, instrução e planejamento.']].map(([n,t,d])=><article className="tilt-card" key={n}><span>{n}</span><div className="card-icon">{n==='01'?'⌖':n==='02'?'◈':n==='03'?'◆':'◉'}</div><h3>{t}</h3><p>{d}</p><i>↗</i></article>)}
-      </section>
-      <section className="project-blueprint">
-        <header className="section-head"><div><p className="kicker">ARQUITETURA DO PROJETO</p><h2>UMA UNIDADE<br/><em>PRONTA PARA ASSUMIR.</em></h2></div><p>O projeto organiza pessoas, formação, comando, documentação e avaliação em um modelo adaptável à realidade da cidade de implantação.</p></header>
-        <div className="blueprint-grid">{[
-          ['01','OBJETIVO CENTRAL','Implantar uma unidade BAEP com identidade definida, cadeia de comando clara, efetivo preparado e capacidade de evolução contínua.'],
-          ['02','ENTREGA INSTITUCIONAL','Apresentar à administração uma proposta completa, compreensível e aplicável, com fases, responsáveis e resultados esperados.'],
-          ['03','ESTRUTURA HUMANA','Distribuir funções entre comando, RH, instrução, mobilidade, supervisão e efetivo operacional.'],
-          ['04','PADRÃO DE FORMAÇÃO','Garantir que cada integrante percorra uma trilha comum, seja avaliado e mantenha sua qualificação atualizada.'],
-          ['05','GESTÃO E CONTROLE','Registrar decisões, acompanhar indicadores, revisar resultados e transformar aprendizados em melhoria.'],
-          ['06','ADAPTAÇÃO LOCAL','Adequar cronograma, efetivo e prioridades à cidade que receberá a unidade sem perder a identidade do 18º BPM/M.']
-        ].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><i>↗</i></article>)}</div>
-        <div className="project-promise"><span>COMPROMISSO DO 18º BPM/M</span><strong>ENTREGAR UMA UNIDADE ORGANIZADA, CAPACITADA, AVALIÁVEL E PRONTA PARA EVOLUIR.</strong></div>
-      </section>
-      <section className="operations" id="operacao">
-        <header className="section-head"><div><p className="kicker">MODELO DE ATUAÇÃO</p><h2>COMO VAMOS<br/><em>TRABALHAR.</em></h2></div><p>Presença planejada, integração entre equipes e uma rotina clara de comando, execução e avaliação.</p></header>
-        <div className="ops-dashboard advanced">
-          <aside className="ops-nav"><small>CENTRAL OPERACIONAL</small>{operationalStages.map((stage,i)=><button key={stage.code} className={activeOperation===i?'active':''} onClick={() => setActiveOperation(i)} aria-pressed={activeOperation===i}><span>{stage.code}</span>{stage.title}<b>↗</b></button>)}<div className="ops-nav-footer"><i /> SISTEMA INTEGRADO<b>{clock}</b></div></aside>
-          <div className="ops-map">
-            <div className="map-grid"/><div className="radar-cross horizontal"/><div className="radar-cross vertical"/><div className="map-ring ring-one"/><div className="map-ring ring-two"/><div className="map-ring ring-three"/>
-            <div className="map-top-data"><span>RADAR / 18-BPMM</span><b>{operationalStages[activeOperation].channel}</b><i>● MONITORAMENTO ATIVO</i></div>
-            <div className="map-node node-a"><i/>SETOR ALFA<small>PRIORIDADE 01</small></div><div className="map-node node-b"><i/>SETOR BRAVO<small>PRIORIDADE 02</small></div><div className="map-node node-c"><i/>SETOR CHARLIE<small>PRIORIDADE 03</small></div><div className="map-node node-d"><i/>APOIO<small>RESERVA</small></div>
-            <div className="map-command"><span>18º BPM/M</span><b>CENTRO DE COMANDO</b><small>{operationalStages[activeOperation].label}</small><div className="command-bars"><i/><i/><i/><i/><i/></div></div>
-            <div className="map-status"><span>SITUAÇÃO OPERACIONAL</span><b><i/> MONITORAMENTO ATIVO</b></div>
-            <div className="map-coordinates"><span>SETOR</span><b>GERAL</b><span>COBERTURA</span><b>03 + APOIO</b><span>ATUALIZAÇÃO</span><b>{clock}</b></div>
-            <div className="map-scale"><i/><i/><i/><i/><i/><span>ESCALA TERRITORIAL / ADAPTÁVEL</span></div>
-          </div>
-          <aside className="ops-detail"><span>{operationalStages[activeOperation].code} / {operationalStages[activeOperation].label}</span><h3>{operationalStages[activeOperation].title}</h3><p>{operationalStages[activeOperation].description}</p><div className="detail-readiness"><small>NÍVEL DE PREPARAÇÃO</small><b>{operationalStages[activeOperation].readiness}</b><i><span style={{width:operationalStages[activeOperation].readiness}}/></i></div><ul>{operationalStages[activeOperation].bullets.map((item)=><li key={item}>{item}</li>)}</ul><footer><span>CANAL ATIVO</span><b>{operationalStages[activeOperation].channel}</b></footer></aside>
-        </div>
-        <div className="ops-intelligence">{[
-          ['SISTEMA','ONLINE','Integração dos módulos'],
-          ['COBERTURA','04 NÍVEIS','Setores e apoio'],
-          ['CICLO','05 ETAPAS','Do diagnóstico à avaliação'],
-          ['COMANDO','ATIVO','Supervisão e controle'],
-          ['QUALIDADE','CONTÍNUA','Revisão e melhoria']
-        ].map(([t,v,d],i)=><article key={t}><span>0{i+1}</span><small>{t}</small><b>{v}</b><p>{d}</p><i /></article>)}</div>
-        <div className="workflows">{[['BRIEFING','Antes de cada ciclo','Objetivos, equipes, comunicação e responsabilidades definidos pelo comando.'],['PRESENÇA','Durante a atuação','Equipes distribuídas por setores com coordenação, disciplina e comunicação contínua.'],['DEBRIEFING','Após cada ciclo','Registro dos resultados, revisão das decisões e plano de melhoria para a próxima atuação.']].map(([t,s,d],i)=><article key={t}><b>0{i+1}</b><small>{s}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
-      </section>
-      <section className="structure" id="estrutura">
-        <header className="section-head"><div><p className="kicker">CADEIA DE COMANDO</p><h2>ESTRUTURA DA<br/><em>UNIDADE</em></h2></div><p>Uma organização construída sobre liderança, responsabilidade e integração.</p></header>
-        <div className="command-grid">
-          <article className="leader leader-main"><span className="rank">✵✵✧</span><small>RESPONSÁVEL GERAL</small><h3>TEN-CEL<br/>RAFAEL AGUIAR</h3><div className="leader-code">CMD / 001</div></article>
-          <article className="leader"><span className="rank">✵✧✧</span><small>SUBCOMANDO</small><h3>MAJ PM<br/>JERALDO</h3><div className="leader-code">SCMD / 002</div></article>
-          <article className="leader"><span className="rank">✧✧✧</span><small>RECURSOS HUMANOS</small><h3>CAP PM<br/>GABRIEL SANTOS</h3><div className="leader-code">RH / 003</div></article>
-          <article className="leader"><span className="rank">✧✧</span><small>OFICIAL</small><h3>1º TEN PM<br/>VALDIR</h3><div className="leader-code">OF / 004</div></article>
-          <article className="leader accent"><span className="rank">✧</span><small>UNIDADE DE MOTOS</small><h3>2º TEN PM<br/>H. SMITH</h3><div className="leader-code">MOTO / 005</div></article>
-        </div>
-        <div className="roster">
-          {[['✯','ASP PM','VITOR'],['❯❯ ❯❯❯','1º SGT PM','DEREK OLIVEIRA'],['❯❯ ❯❯❯','1º SGT PM','VITOR HUGO'],['❯❯❯','3º SGT PM','JOTA BUENO'],['◊❯❯','ALN SGT PM','ARTHUR PORTELLA'],['❯❯','CB PM','MARCOS SILVA'],['❯❯','CB PM','FELIPE ALMEIDA'],['❯❯','CB PM','MAYCON RIOS'],['❯','SD PM','JOAO CAVALCANTE'],['❯','SD PM','MATHEUS SILVA'],['❯','SD PM','BIREL COSTA']].map(([s,r,n],i)=><div className="roster-row" key={n}><b>{String(i+6).padStart(2,'0')}</b><span>{s}</span><small>{r}</small><strong>{n}</strong><i>ATIVO</i></div>)}
-        </div>
-      </section>
-      <section className="academy" id="formacao">
-        <div className="academy-copy"><p className="kicker">ACADEMIA DE FORMAÇÃO</p><h2>PREPARO QUE<br/><em>DEFINE O PADRÃO.</em></h2><p>Uma trilha progressiva que transforma conhecimento em prontidão, com instrução, simulação, avaliação e reciclagem.</p><div className="academy-stat"><b className="count-up" data-count="6">00</b><span>MÓDULOS<br/>ESTRATÉGICOS</span><b className="count-up" data-count="100" data-suffix="%">0%</b><span>AVALIAÇÃO<br/>CONTÍNUA</span></div></div>
-        <div className="courses">
-          {[['01','DOUTRINA E DISCIPLINA','Fundamentos da unidade, postura e cadeia de comando.'],['02','ABORDAGEM TÁTICA','Procedimentos, comunicação e controle de cenário.'],['03','PATRULHAMENTO ESPECIALIZADO','Planejamento, progressão e atuação coordenada.'],['04','OPERAÇÕES COM MOTOCICLETAS','Mobilidade, escolta e pronta resposta.'],['05','GERENCIAMENTO DE CRISES','Tomada de decisão, negociação e comando.'],['06','LIDERANÇA OPERACIONAL','Gestão de equipe, avaliação e desenvolvimento.']].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><b>＋</b></article>)}
-        </div>
-      </section>
-      <section className="training-system">
-        <header className="section-head"><div><p className="kicker">MATRIZ DE CAPACITAÇÃO</p><h2>CURSOS E<br/><em>CERTIFICAÇÕES.</em></h2></div><p>Formação organizada por níveis, com pré-requisitos, prática supervisionada, avaliação e reciclagem.</p></header>
-        <div className="training-grid">{[
-          ['BASE','Modulação e B.O. PM','Comunicação, registro padronizado e fluxo de informação.','4H','Reduz falhas de comunicação e melhora a qualidade dos registros.','Padronização de rádio, relatórios e passagem de serviço.'],
-          ['BASE','P.O.P. / Carceragem','Procedimentos, responsabilidades e documentação.','4H','Fortalece a segurança administrativa e a responsabilidade funcional.','Rotinas de custódia, conferência, registro e transferência.'],
-          ['BASE','Abordagem e Posicionamento','Postura, comunicação e segurança no atendimento.','6H','Desenvolve controle emocional, leitura de cenário e atuação coordenada.','Exercícios de verbalização, posicionamento e tomada de decisão.'],
-          ['MOBILIDADE','Direção Defensiva','Condução responsável, prevenção e tomada de decisão.','6H','Diminui riscos, preserva viaturas e aumenta a segurança da equipe.','Percepção de risco, condução preventiva e resposta a imprevistos.'],
-          ['TÁTICO','TAT I','Fundamentos, disciplina de equipe e progressão formativa.','8H','Cria uma base operacional comum para todo o efetivo.','Comandos, formação de equipe, disciplina e exercícios básicos.'],
-          ['TÁTICO','TAT II','Integração de equipe e resolução de cenários simulados.','8H','Aumenta a integração, a comunicação e a velocidade das decisões.','Simulações progressivas com funções e objetivos definidos.'],
-          ['TÁTICO','TAT III','Liderança, coordenação e avaliação avançada.','10H','Prepara graduados e oficiais para comandar equipes em cenários complexos.','Planejamento, supervisão, avaliação e correção de desempenho.'],
-          ['ESPECIALIZAÇÃO','SAT-A','Aperfeiçoamento técnico e atuação supervisionada.','6H','Transforma conhecimento teórico em competência prática observável.','Estações técnicas, repetição orientada e avaliação individual.'],
-          ['ESPECIALIZAÇÃO','SAT-B','Consolidação técnica e certificação de competência.','8H','Valida o padrão mínimo para atuação especializada na unidade.','Cenários integrados, prova prática e registro de desempenho.'],
-          ['FORMAÇÃO','CFC','Curso de formação para liderança, instrução e gestão.','12H','Forma líderes capazes de desenvolver pessoas e manter o padrão institucional.','Gestão de equipe, instrução, feedback, escala e acompanhamento.'],
-          ['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H','Amplia mobilidade, presença e capacidade de resposta da unidade.','Pilotagem aplicada, comunicação, patrulhamento e trabalho em dupla.'],
-          ['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H','Capacita o comandante a empregar e acompanhar a unidade de motocicletas.','Briefing, distribuição de equipes, supervisão e debriefing.']
-        ].map(([tag,t,d,h,impact,application],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
-        <div className="formation-impact">
-          <header><span>RESULTADO DA FORMAÇÃO</span><h3>O QUE A MATRIZ ENTREGA À UNIDADE</h3></header>
-          <div>{[
-            ['01','PADRONIZAÇÃO','Todos trabalham com os mesmos procedimentos, linguagem e critérios de qualidade.'],
-            ['02','PRONTIDÃO','O efetivo conhece sua função e responde com mais segurança e organização.'],
-            ['03','LIDERANÇA','Graduados e oficiais acompanham, orientam e desenvolvem suas equipes.'],
-            ['04','MELHORIA CONTÍNUA','Avaliações e reciclagens transformam falhas observadas em novos treinamentos.']
-          ].map(([n,t,d])=><article key={n}><b>{n}</b><h4>{t}</h4><p>{d}</p></article>)}</div>
-        </div>
-        <div className="training-flow">{[['01','INSCRIÇÃO','Pré-requisitos'],['02','INSTRUÇÃO','Teoria orientada'],['03','SIMULAÇÃO','Prática supervisionada'],['04','AVALIAÇÃO','Critérios objetivos'],['05','CERTIFICAÇÃO','Registro e validade']].map(([n,t,d],i)=><div className="flow-item" key={n}><span>{n}</span><b>{t}</b><small>{d}</small>{i<4&&<i>→</i>}</div>)}</div>
-      </section>
-      <section className="governance">
-        <div className="governance-copy"><p className="kicker">GESTÃO DA UNIDADE</p><h2>PADRÃO EM<br/><em>CADA DETALHE.</em></h2><p>A unidade trabalha com responsabilidades definidas, registro de decisões e acompanhamento contínuo do efetivo.</p></div>
-        <div className="governance-grid">{[['COMANDO GERAL','Direção estratégica, prioridades e validação das operações.','TEN-CEL Rafael Aguiar'],['SUBCOMANDO','Coordenação da unidade, apoio ao comando e supervisão das atividades.','MAJ PM Jeraldo'],['RECURSOS HUMANOS','Escalas, documentação, desenvolvimento e acompanhamento.','CAP PM Gabriel Santos'],['UNIDADE DE MOTOS','Formação específica, prontidão e gestão da mobilidade.','2º TEN PM H. Smith'],['INSTRUÇÃO','Calendário, instrutores, avaliações e certificações.','Comissão de Formação'],['CONTROLE DE QUALIDADE','Revisão de relatórios, indicadores e plano de melhoria.','Comando da Unidade'],['COMUNICAÇÃO','Briefings, avisos, agenda e memória institucional.','Secretaria Operacional']].map(([t,d,r],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p><small>RESPONSÁVEL</small><b>{r}</b></article>)}</div>
-      </section>
-      <section className="indicators">
-        <header><p className="kicker">PAINEL DE PRONTIDÃO</p><h2>O QUE VAMOS<br/><em>ACOMPANHAR.</em></h2></header>
-        <div className="indicator-grid">{[['01','EFETIVO','Presença, disponibilidade e distribuição por função.','100%'],['02','FORMAÇÃO','Cursos concluídos, avaliações e reciclagens.','12 trilhas'],['03','DISCIPLINA','Pontualidade, registros e cumprimento dos padrões.','Contínuo'],['04','OPERAÇÃO','Planejamento executado e relatórios finalizados.','Por ciclo'],['05','LIDERANÇA','Feedback, evolução e desenvolvimento do efetivo.','Mensal'],['06','QUALIDADE','Lições aprendidas e ações de melhoria implementadas.','Semanal']].map(([n,t,d,v])=><article key={n}><span>{n}</span><h3>{t}</h3><strong>{v}</strong><p>{d}</p><div><i/></div></article>)}</div>
-      </section>
-      <section className="readiness-system">
-        <header className="section-head"><div><p className="kicker">CONDIÇÕES DE IMPLANTAÇÃO</p><h2>O QUE PRECISA<br/><em>ESTAR PRONTO.</em></h2></div><p>A ativação acontece somente quando estrutura, pessoas, formação e gestão atingem o padrão mínimo definido pelo comando.</p></header>
-        <div className="readiness-board">
-          <div className="readiness-levels">{[
-            ['01','COMANDO E FUNÇÕES','Nomeação formal dos responsáveis, substituições previstas e atribuições documentadas.','ESSENCIAL'],
-            ['02','EFETIVO E ESCALAS','Quantidade compatível, disponibilidade conhecida e distribuição equilibrada por função.','ESSENCIAL'],
-            ['03','FORMAÇÃO CERTIFICADA','Trilhas obrigatórias concluídas, avaliações registradas e reciclagens programadas.','OBRIGATÓRIO'],
-            ['04','ROTINAS E DOCUMENTOS','Briefing, debriefing, relatórios, registros internos e comunicação padronizada.','OBRIGATÓRIO'],
-            ['05','RECURSOS E MOBILIDADE','Meios disponíveis, responsáveis definidos e controle de utilização estabelecido.','OPERACIONAL'],
-            ['06','INDICADORES E REVISÃO','Metas, acompanhamento periódico e plano de melhoria aprovado pelo comando.','CONTÍNUO']
-          ].map(([n,t,d,s])=><article key={n}><b>{n}</b><div><h3>{t}</h3><p>{d}</p></div><span>{s}</span></article>)}</div>
-          <aside className="approval-gate"><small>PORTÃO DE ATIVAÇÃO</small><h3>CRITÉRIO DE<br/>PRONTIDÃO</h3><div className="gate-score"><b className="count-up" data-count="100" data-suffix="%">0%</b><span>REQUISITOS<br/>VERIFICADOS</span></div><ul><li>Comando validado</li><li>Efetivo capacitado</li><li>Documentação aprovada</li><li>Rotina testada</li><li>Plano de melhoria ativo</li></ul><footer><i /> LIBERAÇÃO PELO COMANDO GERAL</footer></aside>
-        </div>
-        <div className="city-deliverables">{[
-          ['PLANO DE 90 DIAS','Cronograma inicial com prioridades, responsáveis e pontos de avaliação.'],
-          ['MATRIZ DE RESPONSABILIDADES','Definição clara de quem decide, executa, acompanha e comunica.'],
-          ['RELATÓRIO DE PRONTIDÃO','Visão consolidada da formação, do efetivo e das pendências antes da ativação.'],
-          ['CICLO DE REVISÃO','Reuniões periódicas para avaliar resultados e atualizar o plano da unidade.']
-        ].map(([t,d],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p></article>)}</div>
-      </section>
-      <section className="roadmap" id="implantacao">
-        <header className="section-head"><div><p className="kicker">PLANO DE IMPLANTAÇÃO</p><h2>DA VISÃO À<br/><em>PRONTIDÃO.</em></h2></div><p>Quatro movimentos para estruturar, capacitar, validar e ativar a nova unidade.</p></header>
-        <div className="timeline"><div className="progress-line" />{[['FASE 01','ESTRUTURAÇÃO','Definição de comando, funções, normas e identidade da unidade.'],['FASE 02','CAPACITAÇÃO','Ciclo intensivo de cursos, instruções e exercícios integrados.'],['FASE 03','VALIDAÇÃO','Avaliações técnicas, simulações e certificação do efetivo.'],['FASE 04','ATIVAÇÃO','Início das operações com acompanhamento e melhoria contínua.']].map(([f,t,d],i)=><article key={f}><div className="phase-dot">{i+1}</div><small>{f}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
-        <div className="final-cta"><Crest/><div><small>18º BPM/M – VIRTUAL</small><h2>DISCIPLINA. PREPARO.<br/>PRESENÇA.</h2><p>Projeto geral · Implantação BAEP</p></div><a href="#inicio">VOLTAR AO TOPO ↑</a></div>
-      </section>
-      <footer className="disclaimer">PROJETO VIRTUAL INDEPENDENTE · SEM VÍNCULO COM ÓRGÃOS PÚBLICOS REAIS</footer>
-    </main>
-  );
+  const [stage, setStage] = useState(0);
+  const [group, setGroup] = useState('Todos');
+  const [query, setQuery] = useState('');
+  const [spin, setSpin] = useState(false);
+  const selected = stages[stage];
+  const filtered = courses.filter(c => (group === 'Todos' || c.group === group) && `${c.name} ${c.goal}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
+  return <>
+    <a className="skip-link" href="#conteudo">Ir para o conteúdo</a>
+    <header className="site-header"><a href="#inicio" className="brand"><span className="brand-mark">18<span>º</span></span><span><b>BPM/M <i>— VIRTUAL</i></b><small>PROJETO DE IMPLANTAÇÃO BAEP</small></span></a><button className="menu-toggle" aria-expanded={menu} aria-controls="navigation" onClick={() => setMenu(!menu)}>{menu ? 'Fechar −' : 'Menu +'}</button><nav id="navigation" className={menu ? 'is-open' : ''} aria-label="Navegação principal">{[['O projeto','projeto'],['Atuação','operacao'],['Comando','estrutura'],['Cursos','formacao']].map(([label,id]) => <a key={id} href={`#${id}`} onClick={() => setMenu(false)}>{label}</a>)}<a className="nav-contact" href="#implantacao" onClick={() => setMenu(false)}>Plano de implantação <span>↗</span></a></nav></header>
+    <main id="conteudo">
+      <section className="hero wrap" id="inicio"><div className="hero-topline"><span><i className="status-dot" /> DOCUMENTO DE APRESENTAÇÃO</span><span>18º BPM/M · PROJETO GERAL</span></div><div className="hero-layout"><div className="hero-copy"><span className="eyebrow">Batalhão de Ações Especiais</span><h1>O nome é BAEP.<br /><em>O compromisso<br />é nosso.</em></h1><p>O 18º BPM/M – Virtual apresenta sua proposta para assumir uma unidade BAEP: comando definido, formação acompanhada e uma rotina de trabalho que possa ser cobrada.</p><div className="hero-actions"><a className="button" href="#projeto">Conheça a proposta <span>↗</span></a><a className="text-link" href="#formacao">Ver os cursos <span>↓</span></a></div><div className="hero-note"><span>SEM DESTINO FIXO</span><p>Um projeto adaptável à comunidade que receber a unidade.</p></div></div><div className="emblem-panel"><div className="panel-caption"><span>IDENTIDADE / AÇÕES ESPECIAIS</span><span>18 / BAEP</span></div><div className="emblem-stage"><div className="emblem-orbit" aria-hidden="true" /><div className="emblem-line" aria-hidden="true" /><Crest className={spin ? 'is-spinning' : ''} /></div><div className="panel-bottom"><div><span>APRESENTADO PELO</span><strong>18º BPM/M — Virtual</strong></div><button className="rotation-control" onClick={() => setSpin(!spin)} aria-pressed={spin}>{spin ? 'Pausar giro Ⅱ' : 'Girar brasão ↻'}</button></div><p className="panel-footnote">Identidade visual de referência · projeto virtual independente</p></div></div><div className="hero-footer"><span>Disciplina no trato. Clareza no comando. Constância no preparo.</span><a href="#projeto">Leia o projeto <b>↓</b></a></div></section>
+
+      <section className="proposal section wrap" id="projeto"><SectionHeading number="01" label="A proposta" title="Antes de assumir, organizar.">A apresentação não substitui o alinhamento com a administração. Ela mostra o que propomos, quem responde e como pretendemos colocar em prática.</SectionHeading><div className="proposal-layout"><div className="statement"><span className="label">NOSSA PROPOSTA</span><h3>Não basta reunir um efetivo.<br />É preciso dar direção a ele.</h3><p>O projeto do 18º reúne uma estrutura de comando, uma matriz de cursos e um plano de implantação. A intenção é começar com responsabilidades claras e ampliar a atuação conforme a equipe demonstrar preparo.</p><p>As regras da comunidade e os acordos com sua administração orientam toda a implantação. Funções, cronograma e recursos são ajustados antes da ativação.</p><a className="text-link" href="#estrutura">Quem responde pelo projeto <span>↗</span></a></div><div className="commitments">{[['Comando que acompanha','Cada área tem um responsável. Dúvidas, mudanças e decisões devem percorrer uma cadeia de comando compreensível.'],['Formação que faz diferença','O curso precisa ter objetivo, avaliação e retorno ao integrante. Presença sozinha não comprova aprendizado.'],['Rotina que deixa registro','Briefings, relatórios e revisões ajudam a manter continuidade, mesmo quando as equipes mudam.']].map(([title,text],i) => <article key={title}><span className="item-number">0{i+1}</span><div><h3>{title}</h3><p>{text}</p></div></article>)}</div></div></section>
+
+      <section className="operations section" id="operacao"><div className="wrap"><SectionHeading number="02" label="Rotina da unidade" title="Do alinhamento à revisão.">Selecione uma etapa para conhecer a rotina proposta. Este painel explica o fluxo de trabalho; não representa monitoramento ao vivo.</SectionHeading><div className="operations-panel"><div className="stage-tabs" aria-label="Etapas de atuação">{stages.map((item,i)=><button key={item.label} aria-pressed={stage===i} aria-controls="stage-detail" onClick={()=>setStage(i)}><span>0{i+1}</span>{item.label}<b>{stage===i?'−':'+'}</b></button>)}</div><div className="stage-content" id="stage-detail"><div className="flow-visual" aria-hidden="true"><div className="flow-radar"><div className="radar-sweep"/><span className="radar-center">18º<br/><small>COMANDO</small></span>{stages.map((item,i)=><span key={item.label} className={`flow-point point-${i} ${stage===i?'selected':''}`}><i/>{item.label}</span>)}</div><span className="diagram-label">FLUXO ILUSTRATIVO / 04 ETAPAS</span></div><div className="stage-text" key={stage} aria-live="polite"><span className="eyebrow">ETAPA 0{stage+1}</span><h3>{selected.title}</h3><p>{selected.text}</p><ul>{selected.items.map(item=><li key={item}>{item}</li>)}</ul><div className="stage-output"><span>O QUE FICA REGISTRADO</span><p>{selected.output}</p></div></div></div></div></div></section>
+
+      <section className="section wrap command-section" id="estrutura"><SectionHeading number="03" label="Pessoas e responsabilidades" title="Uma cadeia de comando. Nomes definidos.">Esta é a composição apresentada pelo 18º. As atribuições específicas são alinhadas antes da implantação.</SectionHeading><div className="command-grid">{command.map(([rank,name,role,desc],i)=><article className={i===0?'command-card chief':'command-card'} key={name}><div className="command-top"><span>{rank}</span><small>0{i+1}</small></div><h3>{name}</h3><span className="role">{role}</span><p>{desc}</p></article>)}</div><details className="roster"><summary><span>Quadro complementar do efetivo <small>{roster.length} integrantes relacionados</small></span><b>+</b></summary><div className="roster-list">{roster.map(([rank,name])=><div key={name}><span>{rank}</span><strong>{name}</strong></div>)}</div></details><div className="structure-note"><span>RESPONSABILIDADES A DESIGNAR</span><p>Instrutores, apoio administrativo e responsáveis pela avaliação serão definidos pelo comando conforme disponibilidade e qualificação. Não são apresentados aqui como setores já em funcionamento.</p></div></section>
+
+      <section className="academy section" id="formacao"><div className="wrap"><SectionHeading number="04" label="Matriz de formação" title="Curso não é só uma sigla.">Veja o objetivo, o que cada curso muda na unidade e como o aprendizado pode ser avaliado. Abra uma ficha para conhecer a proposta.</SectionHeading><div className="formation-notice"><span>PROPOSTA FORMATIVA</span><p>Cargas horárias e ementas são sugestões para validação pelo comando e pela administração. Conteúdos destinados exclusivamente ao ambiente virtual, sem certificação profissional real.</p></div><div className="course-toolbar"><div className="course-filters" aria-label="Filtrar cursos">{groups.map(item=><button key={item} aria-pressed={group===item} onClick={()=>setGroup(item)}>{item}</button>)}</div><label className="course-search"><span className="sr-only">Buscar curso</span><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar curso..." type="search"/><span aria-hidden="true">⌕</span></label></div><div className="course-result" aria-live="polite">{filtered.length} {filtered.length===1?'curso encontrado':'cursos encontrados'}<span>Horas sugeridas · conteúdo expansível</span></div><div className="course-list">{filtered.map(course=><details className="course" key={course.name}><summary><span className="course-index">{String(courses.indexOf(course)+1).padStart(2,'0')}</span><div className="course-title"><span>{course.group}</span><h3>{course.name}</h3><p>{course.goal}</p></div><span className="course-hours">{course.hours}<small>proposta</small></span><b className="expand-icon">+</b></summary><div className="course-body"><div className="course-impact"><span className="label">O QUE MUDA NA UNIDADE</span><p>{course.impact}</p></div><dl><div><dt>Pré-requisito proposto</dt><dd>{course.entry}</dd></div><div><dt>Como será trabalhado</dt><dd>{course.practice}</dd></div><div><dt>O que será avaliado</dt><dd>{course.assessment}</dd></div></dl></div></details>)}</div>{filtered.length===0&&<div className="empty-state"><p>Nenhum curso corresponde à busca.</p><button onClick={()=>{setQuery('');setGroup('Todos');}}>Limpar filtros</button></div>}<div className="learning-path"><h3>Uma trilha, não uma coleção de cursos.</h3><ol><li><b>01</b><span>Conhecer as regras<small>Integração e fundamentos</small></span></li><li><b>02</b><span>Praticar acompanhado<small>Instrução e simulação</small></span></li><li><b>03</b><span>Receber avaliação<small>Critérios e feedback</small></span></li><li><b>04</b><span>Revisar o aprendizado<small>Reciclagem e evolução</small></span></li></ol></div></div></section>
+
+      <section className="section wrap implementation" id="implantacao"><SectionHeading number="05" label="Da proposta à prática" title="Assumir por etapas. Ampliar com critério.">Um cronograma inicial de referência, ajustável à disponibilidade da equipe. Os períodos abaixo são uma proposta, não uma promessa de ativação.</SectionHeading><div className="timeline">{[['01—15','Alinhamento e organização','Revisar regras, confirmar responsáveis e levantar disponibilidade.','Plano acordado e quadro de funções.'],['16—30','Formação de base','Aplicar integração e módulos fundamentais, com avaliações registradas.','Mapa de formação e pendências por integrante.'],['31—60','Atuação acompanhada','Realizar atividades-piloto permitidas e revisar comunicação e organização.','Relatórios de acompanhamento e ajustes.'],['61—90','Revisão e consolidação','Avaliar a experiência inicial antes de ampliar o escopo de atuação.','Parecer do comando e plano do próximo ciclo.']].map(([days,title,desc,delivery])=><article key={days}><span className="timeline-days">DIAS <b>{days}</b></span><h3>{title}</h3><p>{desc}</p><div><span>ENTREGA PREVISTA</span><p>{delivery}</p></div></article>)}</div><div className="activation"><div><span className="eyebrow">ANTES DA ATIVAÇÃO</span><h3>O que precisa estar combinado.</h3></div><ul>{['Regras, atribuições e limites aprovados pela administração.','Responsáveis e disponibilidade do efetivo confirmados.','Formação mínima concluída e pendências conhecidas.','Recursos autorizados e rotina de registros organizada.'].map(item=><li key={item}>{item}</li>)}</ul></div></section>
+
+      <section className="accountability section"><div className="wrap accountability-grid"><div><span className="eyebrow">06 / Acompanhamento</span><h2>Menos números de vitrine.<br/><em>Mais retorno sobre o trabalho.</em></h2><p>Os indicadores serão preenchidos com registros reais da unidade após a implantação. Até lá, mostramos o que pretendemos observar.</p></div><div className="metrics">{[['Efetivo','Disponibilidade informada e participação nas atividades.','A cada escala'],['Formação','Conclusões, dificuldades e reciclagens necessárias.','Após cada curso'],['Rotina','Qualidade dos registros e cumprimento dos acordos.','A cada ciclo'],['Desenvolvimento','Feedbacks e ações de melhoria efetivamente concluídas.','Na revisão do comando']].map(([name,desc,freq])=><article key={name}><div><h3>{name}</h3><p>{desc}</p></div><span>{freq}</span></article>)}</div></div></section>
+
+      <section className="closing wrap"><div className="closing-stamp">18º<span>BPM/M — VIRTUAL</span></div><div><span className="eyebrow">PROJETO DE IMPLANTAÇÃO BAEP</span><h2>Prontos para apresentar.<br/><em>Dispostos a construir junto.</em></h2><p>O próximo passo é alinhar esta proposta com a administração da comunidade: regras, equipe, recursos e prioridades.</p><div className="closing-actions"><a className="button" href="#estrutura">Conhecer o comando <span>↗</span></a><button className="text-link" onClick={()=>window.print()}>Imprimir o projeto <span>↗</span></button></div></div></section>
+    </main><footer className="site-footer wrap"><div><b>18º BPM/M — Virtual</b><p>Projeto independente, sem vínculo com órgãos públicos reais.<br/>Brasão utilizado como referência visual no contexto virtual.</p></div><a href="#inicio">Voltar ao início ↑</a></footer>
+  </>;
 }
-
-
