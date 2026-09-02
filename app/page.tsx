@@ -1,5 +1,6 @@
 'use client';
 import CategoryBriefing from './category-briefing';
+import GallerySection from './gallery-section';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -28,11 +29,12 @@ const categories = [
   { id: 'formacao', label: 'Cursos', code: '05', icon: '▤', description: 'Trilhas de formação e matriz de capacitação.' },
   { id: 'gestao', label: 'Gestão', code: '06', icon: '◉', description: 'Responsabilidades e acompanhamento da unidade.' },
   { id: 'implantacao', label: 'Implantação', code: '07', icon: '↗', description: 'Requisitos, entregas e fases de implantação.' },
+  { id: 'galeria', label: 'Galeria', code: '08', icon: '▣', description: 'Registros visuais das atividades virtuais.' },
 ] as const;
 type CategoryId = typeof categories[number]['id'];
 const categoryFromHash = (hash: string): CategoryId => {
   const value = hash.replace(/^#/, '');
-  const aliases: Record<string, CategoryId> = { hierarquia: 'estrutura', cursos: 'formacao', projetos: 'projeto' };
+  const aliases: Record<string, CategoryId> = { hierarquia: 'estrutura', cursos: 'formacao', projetos: 'projeto', fotos: 'galeria' };
   return aliases[value] ?? categories.find(item => item.id === value)?.id ?? 'inicio';
 };
 const trainingCourses = [
@@ -49,6 +51,20 @@ const trainingCourses = [
           ['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H','Amplia mobilidade, presença e capacidade de resposta da unidade.','Pilotagem aplicada, comunicação, patrulhamento e trabalho em dupla.'],
           ['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H','Capacita o comandante a empregar e acompanhar a unidade de motocicletas.','Briefing, distribuição de equipes, supervisão e debriefing.']
         ];
+const coursePlans: Record<string, { prerequisites: string; syllabus: string[]; assessment: string; validity: string }> = {
+  'Modulação e B.O. PM': { prerequisites:'Ingresso e orientação inicial', syllabus:['Comunicação por rádio','Estrutura do registro','Passagem de serviço'], assessment:'Exercício de comunicação e registro', validity:'Reciclagem semestral' },
+  'P.O.P. / Carceragem': { prerequisites:'Modulação e B.O. PM', syllabus:['Responsabilidades funcionais','Conferência e documentação','Fluxo de transferência'], assessment:'Estudo de caso e checklist', validity:'Reciclagem semestral' },
+  'Abordagem e Posicionamento': { prerequisites:'Orientação inicial', syllabus:['Comunicação e postura','Leitura de cenário','Coordenação da equipe'], assessment:'Simulação supervisionada', validity:'Reciclagem trimestral' },
+  'Direção Defensiva': { prerequisites:'Habilitação interna aplicável', syllabus:['Percepção de risco','Condução preventiva','Resposta a imprevistos'], assessment:'Circuito e tomada de decisão', validity:'Reciclagem semestral' },
+  'TAT I': { prerequisites:'Cursos de base concluídos', syllabus:['Disciplina e comandos','Funções da equipe','Exercícios fundamentais'], assessment:'Prova teórica e prática', validity:'Base para TAT II' },
+  'TAT II': { prerequisites:'TAT I aprovado', syllabus:['Integração entre funções','Comunicação em cenário','Decisão sob supervisão'], assessment:'Cenários progressivos', validity:'Base para TAT III' },
+  'TAT III': { prerequisites:'TAT II aprovado e indicação', syllabus:['Planejamento de missão','Liderança de equipe','Debriefing e correção'], assessment:'Planejamento e comando simulado', validity:'Reciclagem semestral' },
+  'SAT-A': { prerequisites:'TAT I e avaliação interna', syllabus:['Estações técnicas','Repetição orientada','Correção individual'], assessment:'Desempenho por estação', validity:'Base para SAT-B' },
+  'SAT-B': { prerequisites:'SAT-A aprovado', syllabus:['Integração de competências','Cenários completos','Padrão de certificação'], assessment:'Prova integrada', validity:'Reciclagem semestral' },
+  'CFC': { prerequisites:'Experiência e indicação do comando', syllabus:['Gestão de pessoas','Instrução e feedback','Escala e acompanhamento'], assessment:'Projeto de liderança', validity:'Acompanhamento contínuo' },
+  'Pelotão RPM / ROCAM': { prerequisites:'Direção defensiva e seleção interna', syllabus:['Pilotagem aplicada','Comunicação em dupla','Rotina de mobilidade'], assessment:'Circuito e cenário integrado', validity:'Reciclagem trimestral' },
+  'Comandante RPM / ROCAM': { prerequisites:'Formação RPM/ROCAM e indicação', syllabus:['Planejamento do emprego','Distribuição das equipes','Supervisão e debriefing'], assessment:'Comando de ciclo simulado', validity:'Acompanhamento contínuo' },
+};
 
 export default function Home() {
   const [menu, setMenu] = useState(false);
@@ -185,7 +201,7 @@ export default function Home() {
         <div className="boot-v2-header"><span>18º BPM/M — VIRTUAL</span><span>APRESENTAÇÃO DO PROJETO BAEP</span></div>
         <div className="boot-v2-body">
           <div className="boot-seal"><div className="seal-ring seal-ring-a" /><div className="seal-ring seal-ring-b" /><Crest /><span>DISCIPLINA · PREPARO · PRESENÇA</span></div>
-          <div className="boot-v2-copy"><small>PROJETO DE IMPLANTAÇÃO / BAEP</small><h2>UMA UNIDADE.<br/><em>UM COMPROMISSO.</em></h2><p>Conheça a estrutura, a formação e a proposta de atuação do 18º BPM/M — Virtual.</p><div className="boot-facts"><div><b>07</b><span>MÓDULOS DO PROJETO</span></div><div><b>12</b><span>CURSOS NA MATRIZ</span></div><div><b>16</b><span>NOMES NA HIERARQUIA</span></div></div></div>
+          <div className="boot-v2-copy"><small>PROJETO DE IMPLANTAÇÃO / BAEP</small><h2>UMA UNIDADE.<br/><em>UM COMPROMISSO.</em></h2><p>Conheça a estrutura, a formação e a proposta de atuação do 18º BPM/M — Virtual.</p><div className="boot-facts"><div><b>08</b><span>MÓDULOS DO PROJETO</span></div><div><b>12</b><span>CURSOS NA MATRIZ</span></div><div><b>16</b><span>NOMES NA HIERARQUIA</span></div></div></div>
         </div>
         <div className="boot-mission-readout"><span>BRIEFING DE APRESENTAÇÃO</span><div><b>{bootProgress < 34 ? '01 / IDENTIDADE' : bootProgress < 67 ? '02 / PREPARAÇÃO' : '03 / IMPLANTAÇÃO'}</b><p>{bootProgress < 34 ? 'Uma estrutura de comando com funções e responsabilidades definidas.' : bootProgress < 67 ? 'Formação progressiva, avaliação e acompanhamento do efetivo.' : 'Implantação por fases, entregas verificáveis e revisão com a administração.'}</p></div><i aria-hidden="true" /></div><div className="boot-dossier"><div className="boot-dossier-label"><span>CONTEÚDO DA APRESENTAÇÃO</span><b>18 / BAEP</b></div><div className="boot-module-map">{categories.map((item,i)=><span key={item.id} className={bootProgress >= i * 14 ? 'revealed' : ''}><b>{item.code}</b>{item.label}<i /></span>)}</div><p>ESTRUTURA · PROGRAMAS · FORMAÇÃO · GESTÃO · IMPLANTAÇÃO</p></div>
         <div className="boot-v2-bottom"><div className="boot-chapters">{['IDENTIDADE','ESTRUTURA','FORMAÇÃO','APRESENTAÇÃO'].map((label,i)=><span key={label} className={bootProgress >= i*25 ? 'reached' : ''}><b>0{i+1}</b>{label}</span>)}</div><div className="intro-track"><i style={{width:bootProgress+'%'}} /></div><div className="intro-caption"><span>APRESENTAÇÃO VISUAL</span><b>{bootProgress}%</b><span>PROJETO VIRTUAL INDEPENDENTE</span></div></div>
@@ -216,7 +232,7 @@ export default function Home() {
         </div>
         <div className="module-toolbar premium-toolbar">
           <div className="toolbar-title"><small>18º BPM/M <span>/</span> CENTRAL DO PROJETO</small><h2 ref={titleRef} tabIndex={-1}>{currentCategory.label}<span>.</span></h2><p>{currentCategory.description}</p></div>
-          <div className="toolbar-index" aria-hidden="true"><span>MÓDULO</span><b>{currentCategory.code}</b><small>DE 07</small></div>
+          <div className="toolbar-index" aria-hidden="true"><span>MÓDULO</span><b>{currentCategory.code}</b><small>DE {String(categories.length).padStart(2,'0')}</small></div>
           <div className="toolbar-context"><span><i /> NAVEGAÇÃO POR CATEGORIAS</span><span>PROJETO GERAL · SEM DESTINO FIXO</span><span>PRÓXIMO: <b>{categories[activeIndex+1]?.label || 'Início'}</b></span></div>
         </div>
         <nav className="module-mobile-tabs" aria-label="Acesso rápido às categorias">{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}><span>{item.code}</span><b>{item.label}<small>{item.description}</small></b><i aria-hidden="true">{item.icon}</i><em aria-hidden="true">↗</em></a>)}</nav>
@@ -314,7 +330,7 @@ export default function Home() {
         <header className="section-head"><div><p className="kicker">MATRIZ DE CAPACITAÇÃO</p><h2>CURSOS E<br/><em>CERTIFICAÇÕES.</em></h2></div><p>Formação organizada por níveis, com pré-requisitos, prática supervisionada, avaliação e reciclagem.</p></header>
         <div className="course-tools"><label><span>BUSCAR NA MATRIZ DE CURSOS</span><input type="search" value={courseQuery} onChange={event => setCourseQuery(event.target.value)} placeholder="Nome do curso ou assunto..." /></label><label><span>CATEGORIA</span><select value={courseLevel} onChange={event => setCourseLevel(event.target.value)}>{['TODOS', ...Array.from(new Set(trainingCourses.map(course => course[0])))].map(level => <option key={level} value={level}>{level}</option>)}</select></label><div aria-live="polite"><b>{String(filteredCourses.length).padStart(2, '0')}</b><span>CURSOS<br/>ENCONTRADOS</span></div></div>
         {filteredCourses.length === 0 && <div className="course-empty"><h3>Nenhum curso encontrado</h3><p>Tente outro nome ou selecione outra categoria.</p><button onClick={() => { setCourseQuery(''); setCourseLevel('TODOS'); }}>Limpar filtros</button></div>}
-        <div className="training-grid">{filteredCourses.map(([tag,t,d,h,impact,application],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
+        <div className="training-grid">{filteredCourses.map(([tag,t,d,h,impact,application],i)=>{const plan=coursePlans[t];return <article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><details className="course-plan"><summary>PLANO DETALHADO <span>＋</span></summary><div><small>PRÉ-REQUISITO</small><p>{plan.prerequisites}</p><small>EMENTA</small><ul>{plan.syllabus.map(item=><li key={item}>{item}</li>)}</ul><small>AVALIAÇÃO</small><p>{plan.assessment}</p><small>VALIDADE / CONTINUIDADE</small><p>{plan.validity}</p></div></details><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>})}</div>
         <div className="formation-impact">
           <header><span>RESULTADO DA FORMAÇÃO</span><h3>O QUE A MATRIZ ENTREGA À UNIDADE</h3></header>
           <div>{[
@@ -367,8 +383,11 @@ export default function Home() {
       </section>
       <CategoryBriefing category="implantacao" />
           </div>
+          <div className="category-panel" hidden={activeCategory !== 'galeria'} role="region" aria-label="Galeria">
+            <GallerySection />
+          </div>
         </div>
-        <nav className="module-pagination" aria-label="Navegar entre categorias"><button disabled={activeIndex === 0} onClick={() => switchCategory(categories[activeIndex - 1].id, true)}><span>←</span><div><small>ANTERIOR</small><b>{categories[activeIndex - 1]?.label || 'Você está no início'}</b></div></button><span>{currentCategory.code} / 07</span><button disabled={activeIndex === categories.length - 1} onClick={() => switchCategory(categories[activeIndex + 1].id, true)}><div><small>PRÓXIMO</small><b>{categories[activeIndex + 1]?.label || 'Último módulo'}</b></div><span>→</span></button></nav>
+        <nav className="module-pagination" aria-label="Navegar entre categorias"><button disabled={activeIndex === 0} onClick={() => switchCategory(categories[activeIndex - 1].id, true)}><span>←</span><div><small>ANTERIOR</small><b>{categories[activeIndex - 1]?.label || 'Você está no início'}</b></div></button><span>{currentCategory.code} / {String(categories.length).padStart(2,'0')}</span><button disabled={activeIndex === categories.length - 1} onClick={() => switchCategory(categories[activeIndex + 1].id, true)}><div><small>PRÓXIMO</small><b>{categories[activeIndex + 1]?.label || 'Último módulo'}</b></div><span>→</span></button></nav>
       <footer className="disclaimer">PROJETO VIRTUAL INDEPENDENTE · SEM VÍNCULO COM ÓRGÃOS PÚBLICOS REAIS</footer>
       </div>
     </main>
