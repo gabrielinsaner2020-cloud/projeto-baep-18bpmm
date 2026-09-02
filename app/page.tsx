@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { flushSync } from 'react-dom';
 
 const stages = [
   { title: 'Alinhar antes de assumir', label: 'Preparação', text: 'A primeira conversa é com a administração. A proposta do 18º precisa caber nas regras, nos recursos e nas necessidades de quem recebe a unidade.', items: ['Definir atribuições e limites de atuação.', 'Confirmar recursos e disponibilidade do efetivo.', 'Registrar os pontos acordados com a administração.'], output: 'Plano de implantação alinhado entre as partes.' },
@@ -46,6 +47,19 @@ export default function Home() {
   const [group, setGroup] = useState('Todos');
   const [query, setQuery] = useState('');
   const [spin, setSpin] = useState(false);
+  function printProject() {
+    const previousGroup = group;
+    const previousQuery = query;
+    const openNames = new Set(Array.from(document.querySelectorAll<HTMLDetailsElement>('details[open]')).map(item => item.querySelector('summary')?.textContent));
+    flushSync(() => { setGroup('Todos'); setQuery(''); });
+    document.querySelectorAll<HTMLDetailsElement>('details').forEach(item => { item.open = true; });
+    window.addEventListener('afterprint', () => {
+      document.querySelectorAll<HTMLDetailsElement>('details').forEach(item => { item.open = openNames.has(item.querySelector('summary')?.textContent); });
+      setGroup(previousGroup);
+      setQuery(previousQuery);
+    }, { once: true });
+    window.print();
+  }
   const selected = stages[stage];
   const filtered = courses.filter(c => (group === 'Todos' || c.group === group) && `${c.name} ${c.goal}`.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')));
   return <>
@@ -66,7 +80,7 @@ export default function Home() {
 
       <section className="accountability section"><div className="wrap accountability-grid"><div><span className="eyebrow">06 / Acompanhamento</span><h2>Menos números de vitrine.<br/><em>Mais retorno sobre o trabalho.</em></h2><p>Os indicadores serão preenchidos com registros reais da unidade após a implantação. Até lá, mostramos o que pretendemos observar.</p></div><div className="metrics">{[['Efetivo','Disponibilidade informada e participação nas atividades.','A cada escala'],['Formação','Conclusões, dificuldades e reciclagens necessárias.','Após cada curso'],['Rotina','Qualidade dos registros e cumprimento dos acordos.','A cada ciclo'],['Desenvolvimento','Feedbacks e ações de melhoria efetivamente concluídas.','Na revisão do comando']].map(([name,desc,freq])=><article key={name}><div><h3>{name}</h3><p>{desc}</p></div><span>{freq}</span></article>)}</div></div></section>
 
-      <section className="closing wrap"><div className="closing-stamp">18º<span>BPM/M — VIRTUAL</span></div><div><span className="eyebrow">PROJETO DE IMPLANTAÇÃO BAEP</span><h2>Prontos para apresentar.<br/><em>Dispostos a construir junto.</em></h2><p>O próximo passo é alinhar esta proposta com a administração da comunidade: regras, equipe, recursos e prioridades.</p><div className="closing-actions"><a className="button" href="#estrutura">Conhecer o comando <span>↗</span></a><button className="text-link" onClick={()=>window.print()}>Imprimir o projeto <span>↗</span></button></div></div></section>
+      <section className="closing wrap"><div className="closing-stamp">18º<span>BPM/M — VIRTUAL</span></div><div><span className="eyebrow">PROJETO DE IMPLANTAÇÃO BAEP</span><h2>Prontos para apresentar.<br/><em>Dispostos a construir junto.</em></h2><p>O próximo passo é alinhar esta proposta com a administração da comunidade: regras, equipe, recursos e prioridades.</p><div className="closing-actions"><a className="button" href="#estrutura">Conhecer o comando <span>↗</span></a><button className="text-link" onClick={printProject}>Imprimir o projeto <span>↗</span></button></div></div></section>
     </main><footer className="site-footer wrap"><div><b>18º BPM/M — Virtual</b><p>Projeto independente, sem vínculo com órgãos públicos reais.<br/>Brasão utilizado como referência visual no contexto virtual.</p></div><a href="#inicio">Voltar ao início ↑</a></footer>
   </>;
 }
