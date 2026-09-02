@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 function Crest() {
   return (
-      <div className="crest-photo" aria-label="Brasão do 7º BAEP">
-        <img src="baep-crest-360-web.png" alt="Brasão do 7º BAEP — Ações Especiais" />
+      <div className="crest-photo" aria-label="Brasão BAEP">
+        <img src="baep-crest-360-web.png" alt="Brasão BAEP — Ações Especiais" />
     </div>
   );
 }
@@ -53,6 +53,9 @@ export default function Home() {
   const [menu, setMenu] = useState(false);
   const [activeCategory, setActiveCategory] = useState<CategoryId>('inicio');
   const [leaving, setLeaving] = useState(false);
+  const [destination, setDestination] = useState<CategoryId>('inicio');
+  const [motionPaused, setMotionPaused] = useState(false);
+  const motionRef = useRef(false);
   const [courseQuery, setCourseQuery] = useState('');
   const [courseLevel, setCourseLevel] = useState('TODOS');
   const categoryRef = useRef<CategoryId>('inicio');
@@ -74,6 +77,7 @@ export default function Home() {
       if (push) window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     }
+    setDestination(next);
     const apply = () => {
       categoryRef.current = next;
       setActiveCategory(next);
@@ -81,8 +85,8 @@ export default function Home() {
       window.scrollTo({ top: 0, behavior: 'instant' });
       requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
     };
-    if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) apply();
-    else { setLeaving(true); transitionTimer.current = window.setTimeout(apply, 180); }
+    if (!animate || motionRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) apply();
+    else { setLeaving(true); transitionTimer.current = window.setTimeout(apply, 440); }
   }, []);
   useEffect(() => {
     switchCategory(categoryFromHash(window.location.hash), false, false);
@@ -164,7 +168,7 @@ export default function Home() {
     };
   }, []);
   return (
-    <main onClick={(event) => {
+    <main className={motionPaused ? "motion-paused" : ""} onClick={(event) => {
       if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
       const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
       if (!anchor) return;
@@ -173,27 +177,22 @@ export default function Home() {
       event.preventDefault();
       switchCategory(categoryFromHash(hash), true);
     }}>
-      <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
-        <div className="boot-grid" /><div className="boot-noise" /><div className="boot-scanline" />
-        <div className="boot-corner boot-corner-a">SYS / 18-BPMM</div><div className="boot-corner boot-corner-b">PROTOCOLO BAEP</div>
-        <div className="boot-status"><i /> CONEXÃO SEGURA <span>ONLINE</span></div>
-        <div className="boot-stage">
-          <div className="boot-telemetry left"><span>COMANDO</span><b>VALIDADO</b><span>EFETIVO</span><b>SINCRONIZADO</b><span>DOUTRINA</span><b>CARREGADA</b></div>
-          <div className="boot-emblem"><div className="boot-ring ring-a" /><div className="boot-ring ring-b" /><Crest /></div>
-          <div className="boot-telemetry right"><span>IDENTIDADE</span><b>18º BPM/M</b><span>PROJETO</span><b>BAEP</b><span>STATUS</span><b>PRONTO</b></div>
+      <div className={`boot-screen boot-v2 ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
+        <div className="boot-grid" aria-hidden="true" /><div className="boot-vignette" aria-hidden="true" />
+        <div className="boot-v2-header"><span>18º BPM/M — VIRTUAL</span><span>APRESENTAÇÃO DO PROJETO BAEP</span></div>
+        <div className="boot-v2-body">
+          <div className="boot-seal"><div className="seal-ring seal-ring-a" /><div className="seal-ring seal-ring-b" /><Crest /><span>DISCIPLINA · PREPARO · PRESENÇA</span></div>
+          <div className="boot-v2-copy"><small>PROJETO DE IMPLANTAÇÃO / BAEP</small><h2>UMA UNIDADE.<br/><em>UM COMPROMISSO.</em></h2><p>Conheça a estrutura, a formação e a proposta de atuação do 18º BPM/M — Virtual.</p><div className="boot-facts"><div><b>07</b><span>MÓDULOS DO PROJETO</span></div><div><b>12</b><span>CURSOS NA MATRIZ</span></div><div><b>16</b><span>NOMES NA HIERARQUIA</span></div></div></div>
         </div>
-        <div className="boot-copy"><span>18º BATALHÃO DE POLÍCIA MILITAR METROPOLITANO</span><strong>CENTRAL DE IMPLANTAÇÃO</strong><small>INICIALIZANDO PROJETO INSTITUCIONAL BAEP</small></div>
-        <div className="boot-steps"><span>01 VALIDANDO IDENTIDADE</span><span>02 SINCRONIZANDO COMANDO</span><span>03 CARREGANDO DOUTRINA</span><span>04 SISTEMA PRONTO</span></div>
-        <div className="boot-terminal"><span><i /> identidade_18bpmm: validada</span><span><i /> cadeia_comando: sincronizada</span><span><i /> matriz_formacao: carregada</span><span><i /> protocolo_implantacao: ativo</span></div>
-        <div className="boot-wave"><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /><i /></div>
-        <div className="boot-progress"><i style={{ width: `${bootProgress}%` }} /></div>
-        <div className="boot-progress-label"><span>CARREGAMENTO OPERACIONAL</span><b>{bootProgress}%</b></div>
-        <button onClick={() => setBooting(false)}>PULAR INTRO ↗</button>
+        <div className="boot-v2-bottom"><div className="boot-chapters">{['IDENTIDADE','ESTRUTURA','FORMAÇÃO','APRESENTAÇÃO'].map((label,i)=><span key={label} className={bootProgress >= i*25 ? 'reached' : ''}><b>0{i+1}</b>{label}</span>)}</div><div className="intro-track"><i style={{width:bootProgress+'%'}} /></div><div className="intro-caption"><span>SEQUÊNCIA DE ABERTURA</span><b>{bootProgress}%</b><span>PROJETO VIRTUAL INDEPENDENTE</span></div></div>
+        <button className="boot-skip" onClick={() => setBooting(false)}>ENTRAR NO PROJETO <span>↗</span></button>
       </div>
       <div className="particles" aria-hidden="true">{Array.from({ length: 18 }, (_, i) => <i key={i} style={{ '--particle': i } as React.CSSProperties} />)}</div>
       <div className="cursor-glow" aria-hidden="true" />
       <nav className="nav">
-        <a className="brand" href="#inicio"><Crest /><span><b>18º BPM/M</b><small>PROJETO BAEP</small></span></a>
+        <a className="brand" href="#inicio"><span className="brand-emblem"><Crest /><i aria-hidden="true" /></span><span><b>18º BPM/M</b><small>PROJETO BAEP</small></span></a>
+        <div className="header-project-data"><span>PROJETO DE IMPLANTAÇÃO</span><b>BAEP <i>/</i> 18º BPM/M</b></div>
+        <button className="motion-toggle" aria-pressed={motionPaused} onClick={() => { motionRef.current = !motionPaused; setMotionPaused(!motionPaused); }} aria-label={motionPaused ? 'Ativar animações' : 'Pausar animações'}><i aria-hidden="true">{motionPaused ? '▶' : 'Ⅱ'}</i><span>{motionPaused ? 'Ativar efeitos' : 'Pausar efeitos'}</span></button>
         <button className="menu-button" onClick={() => setMenu(!menu)} aria-label={menu ? "Fechar categorias" : "Abrir categorias"} aria-controls="module-menu" aria-expanded={menu}><span /><span /></button>
         <div id="module-menu" className={`links ${menu ? 'open' : ''}`}>{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}>{item.label}</a>)}</div>
         <a className="nav-cta" href="#estrutura">Conheça a unidade <span>↗</span></a>
@@ -204,8 +203,13 @@ export default function Home() {
         <div className="module-sidebar-footer"><i /><span>PROJETO VIRTUAL<br/><b>NAVEGAÇÃO POR MÓDULOS</b></span></div>
       </aside>
       <div className="module-content">
-        <div className="module-toolbar"><div><small>PROJETO BAEP <span>/</span> {currentCategory.code}</small><h2 ref={titleRef} tabIndex={-1}>{currentCategory.label}</h2></div><span className="module-counter">MÓDULO <b>{currentCategory.code}</b> / 07</span></div>
-        <nav className="module-mobile-tabs" aria-label="Acesso rápido às categorias">{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}>{item.label}</a>)}</nav>
+        <div className={`transition-veil ${leaving ? 'active' : ''}`} aria-hidden="true"><div className="transition-shutter shutter-left" /><div className="transition-shutter shutter-right" /><div className="transition-caption"><span>ABRINDO MÓDULO / {categories.find(item=>item.id===destination)?.code}</span><b>{categories.find(item=>item.id===destination)?.label}</b><i /></div></div>
+        <div className="module-toolbar premium-toolbar">
+          <div className="toolbar-title"><small>18º BPM/M <span>/</span> CENTRAL DO PROJETO</small><h2 ref={titleRef} tabIndex={-1}>{currentCategory.label}<span>.</span></h2><p>{currentCategory.description}</p></div>
+          <div className="toolbar-index" aria-hidden="true"><span>MÓDULO</span><b>{currentCategory.code}</b><small>DE 07</small></div>
+          <div className="toolbar-context"><span><i /> NAVEGAÇÃO POR CATEGORIAS</span><span>PROJETO GERAL · SEM DESTINO FIXO</span><span>PRÓXIMO: <b>{categories[activeIndex+1]?.label || 'Início'}</b></span></div>
+        </div>
+        <nav className="module-mobile-tabs" aria-label="Acesso rápido às categorias">{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}><span>{item.code}</span><b>{item.label}</b><i aria-hidden="true">{item.icon}</i></a>)}</nav>
         <div className={`category-stage ${leaving ? 'is-leaving' : ''}`} aria-busy={leaving}>
           <div className="module-transition-line" aria-hidden="true" />
           <div className="category-panel" hidden={activeCategory !== 'inicio'} role="region" aria-label="Início">
