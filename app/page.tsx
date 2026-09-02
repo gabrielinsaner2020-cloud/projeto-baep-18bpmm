@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 function Crest() {
   return (
@@ -19,8 +19,85 @@ const operationalStages = [
   { code:'05', title:'RELATÓRIO E AVALIAÇÃO', label:'Aprendizado institucional', description:'Consolidação dos resultados, identificação de oportunidades e definição das melhorias para o próximo ciclo.', bullets:['Debriefing estruturado','Indicadores consolidados','Lições aprendidas registradas','Plano de melhoria aprovado'], readiness:'100%', channel:'QA-05' }
 ];
 
+const categories = [
+  { id: 'inicio', label: 'Início', code: '01', icon: '⌂', description: 'Apresentação e acesso rápido aos módulos.' },
+  { id: 'projeto', label: 'Projetos', code: '02', icon: '◈', description: 'Missão, pilares e compromissos da unidade.' },
+  { id: 'operacao', label: 'Atuação', code: '03', icon: '⌖', description: 'Planejamento, coordenação e rotina de trabalho.' },
+  { id: 'estrutura', label: 'Hierarquia', code: '04', icon: '◇', description: 'Comando, responsáveis e quadro do efetivo.' },
+  { id: 'formacao', label: 'Cursos', code: '05', icon: '▤', description: 'Trilhas de formação e matriz de capacitação.' },
+  { id: 'gestao', label: 'Gestão', code: '06', icon: '◉', description: 'Responsabilidades e acompanhamento da unidade.' },
+  { id: 'implantacao', label: 'Implantação', code: '07', icon: '↗', description: 'Requisitos, entregas e fases de implantação.' },
+] as const;
+type CategoryId = typeof categories[number]['id'];
+const categoryFromHash = (hash: string): CategoryId => {
+  const value = hash.replace(/^#/, '');
+  const aliases: Record<string, CategoryId> = { hierarquia: 'estrutura', cursos: 'formacao', projetos: 'projeto' };
+  return aliases[value] ?? categories.find(item => item.id === value)?.id ?? 'inicio';
+};
+const trainingCourses = [
+          ['BASE','Modulação e B.O. PM','Comunicação, registro padronizado e fluxo de informação.','4H','Reduz falhas de comunicação e melhora a qualidade dos registros.','Padronização de rádio, relatórios e passagem de serviço.'],
+          ['BASE','P.O.P. / Carceragem','Procedimentos, responsabilidades e documentação.','4H','Fortalece a segurança administrativa e a responsabilidade funcional.','Rotinas de custódia, conferência, registro e transferência.'],
+          ['BASE','Abordagem e Posicionamento','Postura, comunicação e segurança no atendimento.','6H','Desenvolve controle emocional, leitura de cenário e atuação coordenada.','Exercícios de verbalização, posicionamento e tomada de decisão.'],
+          ['MOBILIDADE','Direção Defensiva','Condução responsável, prevenção e tomada de decisão.','6H','Diminui riscos, preserva viaturas e aumenta a segurança da equipe.','Percepção de risco, condução preventiva e resposta a imprevistos.'],
+          ['TÁTICO','TAT I','Fundamentos, disciplina de equipe e progressão formativa.','8H','Cria uma base operacional comum para todo o efetivo.','Comandos, formação de equipe, disciplina e exercícios básicos.'],
+          ['TÁTICO','TAT II','Integração de equipe e resolução de cenários simulados.','8H','Aumenta a integração, a comunicação e a velocidade das decisões.','Simulações progressivas com funções e objetivos definidos.'],
+          ['TÁTICO','TAT III','Liderança, coordenação e avaliação avançada.','10H','Prepara graduados e oficiais para comandar equipes em cenários complexos.','Planejamento, supervisão, avaliação e correção de desempenho.'],
+          ['ESPECIALIZAÇÃO','SAT-A','Aperfeiçoamento técnico e atuação supervisionada.','6H','Transforma conhecimento teórico em competência prática observável.','Estações técnicas, repetição orientada e avaliação individual.'],
+          ['ESPECIALIZAÇÃO','SAT-B','Consolidação técnica e certificação de competência.','8H','Valida o padrão mínimo para atuação especializada na unidade.','Cenários integrados, prova prática e registro de desempenho.'],
+          ['FORMAÇÃO','CFC','Curso de formação para liderança, instrução e gestão.','12H','Forma líderes capazes de desenvolver pessoas e manter o padrão institucional.','Gestão de equipe, instrução, feedback, escala e acompanhamento.'],
+          ['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H','Amplia mobilidade, presença e capacidade de resposta da unidade.','Pilotagem aplicada, comunicação, patrulhamento e trabalho em dupla.'],
+          ['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H','Capacita o comandante a empregar e acompanhar a unidade de motocicletas.','Briefing, distribuição de equipes, supervisão e debriefing.']
+        ];
+
 export default function Home() {
   const [menu, setMenu] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<CategoryId>('inicio');
+  const [leaving, setLeaving] = useState(false);
+  const [courseQuery, setCourseQuery] = useState('');
+  const [courseLevel, setCourseLevel] = useState('TODOS');
+  const categoryRef = useRef<CategoryId>('inicio');
+  const transitionTimer = useRef<number | undefined>(undefined);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const activeIndex = categories.findIndex(item => item.id === activeCategory);
+  const currentCategory = categories[activeIndex];
+  const normalize = (value: string) => value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  const filteredCourses = trainingCourses.filter(([tag, title, description]) =>
+    (courseLevel === 'TODOS' || tag === courseLevel) &&
+    normalize(title + ' ' + description).includes(normalize(courseQuery))
+  );
+  const switchCategory = useCallback((next: CategoryId, push = false, animate = true) => {
+    window.clearTimeout(transitionTimer.current);
+    setMenu(false);
+    if (push && window.location.hash !== '#' + next) window.history.pushState(null, '', '#' + next);
+    if (next === categoryRef.current) {
+      setLeaving(false);
+      if (push) window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    }
+    const apply = () => {
+      categoryRef.current = next;
+      setActiveCategory(next);
+      setLeaving(false);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      requestAnimationFrame(() => titleRef.current?.focus({ preventScroll: true }));
+    };
+    if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) apply();
+    else { setLeaving(true); transitionTimer.current = window.setTimeout(apply, 180); }
+  }, []);
+  useEffect(() => {
+    switchCategory(categoryFromHash(window.location.hash), false, false);
+    const sync = () => switchCategory(categoryFromHash(window.location.hash));
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('popstate', sync);
+    return () => {
+      window.clearTimeout(transitionTimer.current);
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('popstate', sync);
+    };
+  }, [switchCategory]);
+  useEffect(() => {
+    document.title = currentCategory.label + ' | Projeto BAEP — 18º BPM/M';
+  }, [currentCategory.label]);
   const [booting, setBooting] = useState(true);
   const [bootProgress, setBootProgress] = useState(0);
   const [activeOperation, setActiveOperation] = useState(0);
@@ -44,7 +121,7 @@ export default function Home() {
         root.setProperty('--tilt-y', `${x * 6}deg`);
       });
     };
-    const sections = document.querySelectorAll<HTMLElement>('main > section:not(.hero)');
+    const sections = document.querySelectorAll<HTMLElement>('.category-panel > section:not(.hero)');
     sections.forEach((section) => section.classList.add('reveal-section'));
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -87,7 +164,15 @@ export default function Home() {
     };
   }, []);
   return (
-    <main>
+    <main onClick={(event) => {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      const anchor = event.target instanceof Element ? event.target.closest<HTMLAnchorElement>('a[href^="#"]') : null;
+      if (!anchor) return;
+      const hash = anchor.getAttribute('href') || '';
+      if (!categories.some(item => '#' + item.id === hash)) return;
+      event.preventDefault();
+      switchCategory(categoryFromHash(hash), true);
+    }}>
       <div className={`boot-screen ${booting ? 'is-active' : 'is-done'}`} aria-hidden={!booting}>
         <div className="boot-grid" /><div className="boot-noise" /><div className="boot-scanline" />
         <div className="boot-corner boot-corner-a">SYS / 18-BPMM</div><div className="boot-corner boot-corner-b">PROTOCOLO BAEP</div>
@@ -109,10 +194,21 @@ export default function Home() {
       <div className="cursor-glow" aria-hidden="true" />
       <nav className="nav">
         <a className="brand" href="#inicio"><Crest /><span><b>18º BPM/M</b><small>PROJETO BAEP</small></span></a>
-        <button className="menu-button" onClick={() => setMenu(!menu)} aria-label="Abrir menu" aria-expanded={menu}><span /><span /></button>
-        <div className={`links ${menu ? 'open' : ''}`}><a href="#projeto">O projeto</a><a href="#operacao">Atuação</a><a href="#estrutura">Estrutura</a><a href="#formacao">Formação</a><a href="#implantacao">Implantação</a></div>
+        <button className="menu-button" onClick={() => setMenu(!menu)} aria-label={menu ? "Fechar categorias" : "Abrir categorias"} aria-controls="module-menu" aria-expanded={menu}><span /><span /></button>
+        <div id="module-menu" className={`links ${menu ? 'open' : ''}`}>{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}>{item.label}</a>)}</div>
         <a className="nav-cta" href="#estrutura">Conheça a unidade <span>↗</span></a>
       </nav>
+      <aside className="module-sidebar" aria-label="Categorias do projeto">
+        <div className="module-sidebar-title"><span>18º BPM/M</span><b>CENTRAL DO PROJETO</b><small>SELECIONE UMA CATEGORIA</small></div>
+        <nav>{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}><span className="module-icon" aria-hidden="true">{item.icon}</span><span>{item.label}<small>{item.code} / MÓDULO</small></span><b>›</b></a>)}</nav>
+        <div className="module-sidebar-footer"><i /><span>PROJETO VIRTUAL<br/><b>NAVEGAÇÃO POR MÓDULOS</b></span></div>
+      </aside>
+      <div className="module-content">
+        <div className="module-toolbar"><div><small>PROJETO BAEP <span>/</span> {currentCategory.code}</small><h2 ref={titleRef} tabIndex={-1}>{currentCategory.label}</h2></div><span className="module-counter">MÓDULO <b>{currentCategory.code}</b> / 07</span></div>
+        <nav className="module-mobile-tabs" aria-label="Acesso rápido às categorias">{categories.map(item => <a key={item.id} href={'#' + item.id} aria-current={activeCategory === item.id ? 'page' : undefined}>{item.label}</a>)}</nav>
+        <div className={`category-stage ${leaving ? 'is-leaving' : ''}`} aria-busy={leaving}>
+          <div className="module-transition-line" aria-hidden="true" />
+          <div className="category-panel" hidden={activeCategory !== 'inicio'} role="region" aria-label="Início">
       <section className="hero" id="inicio">
         <div className="grid-lines" aria-hidden="true" /><div className="scan" aria-hidden="true" />
         <div className="hero-copy">
@@ -125,9 +221,12 @@ export default function Home() {
           <div className="hud-corner top-left" /><div className="hud-corner bottom-right" /><div className="crest-wrap"><div className="crest-aura" /><Crest /></div>
           <div className="datum datum-a"><span>COMANDO</span><b>18º BPM/M</b></div><div className="datum datum-b"><span>DESTINO DO PROJETO</span><b>CIDADE DE IMPLANTAÇÃO</b></div><div className="datum datum-c"><span>STATUS</span><b><i /> PRONTO PARA IMPLANTAÇÃO</b></div>
         </div>
-        <div className="hero-index"><span>01</span><div /><small>VISÃO ESTRATÉGICA</small></div><div className="scroll-cue"><span>SCROLL PARA EXPLORAR</span><i>↓</i></div>
+        <div className="hero-index"><span>01</span><div /><small>VISÃO ESTRATÉGICA</small></div><div className="scroll-cue"><span>EXPLORE PELO MENU DE CATEGORIAS</span><i>↗</i></div>
       </section>
       <section className="ticker" aria-label="Pilares da unidade"><div>DISCIPLINA <b>✦</b> PREPARO <b>✦</b> PRESENÇA <b>✦</b> EXCELÊNCIA OPERACIONAL <b>✦</b> DISCIPLINA <b>✦</b> PREPARO</div></section>
+      <section className="module-launcher"><header><p className="kicker">EXPLORE POR CATEGORIA</p><h2>ACESSO DIRETO<br/><em>AO PROJETO.</em></h2><p>Escolha uma área. Cada módulo reúne uma parte da proposta, sem precisar percorrer todo o site.</p></header><div>{categories.slice(1).map(item => <a href={'#' + item.id} key={item.id}><span>{item.code} / {item.icon}</span><h3>{item.label}</h3><p>{item.description}</p><b>ABRIR MÓDULO ↗</b></a>)}</div></section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'projeto'} role="region" aria-label="Projetos">
       <section className="intro" id="projeto"><div className="section-no">02 / MISSÃO</div><div><p className="kicker">UMA NOVA FORÇA. UMA NOVA MISSÃO.</p><h2>Estrutura, capacitação e liderança para elevar o padrão operacional.</h2></div><p className="intro-text">Este projeto apresenta a visão estratégica para uma unidade BAEP moderna, disciplinada e preparada para os desafios operacionais da cidade que receberá a unidade.</p></section>
       <section className="pillars">
         {[['01','PRESENÇA','Atuação coordenada, pronta resposta e domínio territorial.'],['02','PREPARO','Formação contínua, doutrina e avaliação técnica.'],['03','DISCIPLINA','Comando presente, procedimentos claros e padrão elevado.'],['04','INOVAÇÃO','Tecnologia aplicada à gestão, instrução e planejamento.']].map(([n,t,d])=><article className="tilt-card" key={n}><span>{n}</span><div className="card-icon">{n==='01'?'⌖':n==='02'?'◈':n==='03'?'◆':'◉'}</div><h3>{t}</h3><p>{d}</p><i>↗</i></article>)}
@@ -144,6 +243,8 @@ export default function Home() {
         ].map(([n,t,d])=><article key={n}><span>{n}</span><div><h3>{t}</h3><p>{d}</p></div><i>↗</i></article>)}</div>
         <div className="project-promise"><span>COMPROMISSO DO 18º BPM/M</span><strong>ENTREGAR UMA UNIDADE ORGANIZADA, CAPACITADA, AVALIÁVEL E PRONTA PARA EVOLUIR.</strong></div>
       </section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'operacao'} role="region" aria-label="Atuação">
       <section className="operations" id="operacao">
         <header className="section-head"><div><p className="kicker">MODELO DE ATUAÇÃO</p><h2>COMO VAMOS<br/><em>TRABALHAR.</em></h2></div><p>Presença planejada, integração entre equipes e uma rotina clara de comando, execução e avaliação.</p></header>
         <div className="ops-dashboard advanced">
@@ -168,6 +269,8 @@ export default function Home() {
         ].map(([t,v,d],i)=><article key={t}><span>0{i+1}</span><small>{t}</small><b>{v}</b><p>{d}</p><i /></article>)}</div>
         <div className="workflows">{[['BRIEFING','Antes de cada ciclo','Objetivos, equipes, comunicação e responsabilidades definidos pelo comando.'],['PRESENÇA','Durante a atuação','Equipes distribuídas por setores com coordenação, disciplina e comunicação contínua.'],['DEBRIEFING','Após cada ciclo','Registro dos resultados, revisão das decisões e plano de melhoria para a próxima atuação.']].map(([t,s,d],i)=><article key={t}><b>0{i+1}</b><small>{s}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
       </section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'estrutura'} role="region" aria-label="Hierarquia">
       <section className="structure" id="estrutura">
         <header className="section-head"><div><p className="kicker">CADEIA DE COMANDO</p><h2>ESTRUTURA DA<br/><em>UNIDADE</em></h2></div><p>Uma organização construída sobre liderança, responsabilidade e integração.</p></header>
         <div className="command-grid">
@@ -181,6 +284,8 @@ export default function Home() {
           {[['✯','ASP PM','VITOR'],['❯❯ ❯❯❯','1º SGT PM','DEREK OLIVEIRA'],['❯❯ ❯❯❯','1º SGT PM','VITOR HUGO'],['❯❯❯','3º SGT PM','JOTA BUENO'],['◊❯❯','ALN SGT PM','ARTHUR PORTELLA'],['❯❯','CB PM','MARCOS SILVA'],['❯❯','CB PM','FELIPE ALMEIDA'],['❯❯','CB PM','MAYCON RIOS'],['❯','SD PM','JOAO CAVALCANTE'],['❯','SD PM','MATHEUS SILVA'],['❯','SD PM','BIREL COSTA']].map(([s,r,n],i)=><div className="roster-row" key={n}><b>{String(i+6).padStart(2,'0')}</b><span>{s}</span><small>{r}</small><strong>{n}</strong><i>ATIVO</i></div>)}
         </div>
       </section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'formacao'} role="region" aria-label="Cursos">
       <section className="academy" id="formacao">
         <div className="academy-copy"><p className="kicker">ACADEMIA DE FORMAÇÃO</p><h2>PREPARO QUE<br/><em>DEFINE O PADRÃO.</em></h2><p>Uma trilha progressiva que transforma conhecimento em prontidão, com instrução, simulação, avaliação e reciclagem.</p><div className="academy-stat"><b className="count-up" data-count="6">00</b><span>MÓDULOS<br/>ESTRATÉGICOS</span><b className="count-up" data-count="100" data-suffix="%">0%</b><span>AVALIAÇÃO<br/>CONTÍNUA</span></div></div>
         <div className="courses">
@@ -189,20 +294,9 @@ export default function Home() {
       </section>
       <section className="training-system">
         <header className="section-head"><div><p className="kicker">MATRIZ DE CAPACITAÇÃO</p><h2>CURSOS E<br/><em>CERTIFICAÇÕES.</em></h2></div><p>Formação organizada por níveis, com pré-requisitos, prática supervisionada, avaliação e reciclagem.</p></header>
-        <div className="training-grid">{[
-          ['BASE','Modulação e B.O. PM','Comunicação, registro padronizado e fluxo de informação.','4H','Reduz falhas de comunicação e melhora a qualidade dos registros.','Padronização de rádio, relatórios e passagem de serviço.'],
-          ['BASE','P.O.P. / Carceragem','Procedimentos, responsabilidades e documentação.','4H','Fortalece a segurança administrativa e a responsabilidade funcional.','Rotinas de custódia, conferência, registro e transferência.'],
-          ['BASE','Abordagem e Posicionamento','Postura, comunicação e segurança no atendimento.','6H','Desenvolve controle emocional, leitura de cenário e atuação coordenada.','Exercícios de verbalização, posicionamento e tomada de decisão.'],
-          ['MOBILIDADE','Direção Defensiva','Condução responsável, prevenção e tomada de decisão.','6H','Diminui riscos, preserva viaturas e aumenta a segurança da equipe.','Percepção de risco, condução preventiva e resposta a imprevistos.'],
-          ['TÁTICO','TAT I','Fundamentos, disciplina de equipe e progressão formativa.','8H','Cria uma base operacional comum para todo o efetivo.','Comandos, formação de equipe, disciplina e exercícios básicos.'],
-          ['TÁTICO','TAT II','Integração de equipe e resolução de cenários simulados.','8H','Aumenta a integração, a comunicação e a velocidade das decisões.','Simulações progressivas com funções e objetivos definidos.'],
-          ['TÁTICO','TAT III','Liderança, coordenação e avaliação avançada.','10H','Prepara graduados e oficiais para comandar equipes em cenários complexos.','Planejamento, supervisão, avaliação e correção de desempenho.'],
-          ['ESPECIALIZAÇÃO','SAT-A','Aperfeiçoamento técnico e atuação supervisionada.','6H','Transforma conhecimento teórico em competência prática observável.','Estações técnicas, repetição orientada e avaliação individual.'],
-          ['ESPECIALIZAÇÃO','SAT-B','Consolidação técnica e certificação de competência.','8H','Valida o padrão mínimo para atuação especializada na unidade.','Cenários integrados, prova prática e registro de desempenho.'],
-          ['FORMAÇÃO','CFC','Curso de formação para liderança, instrução e gestão.','12H','Forma líderes capazes de desenvolver pessoas e manter o padrão institucional.','Gestão de equipe, instrução, feedback, escala e acompanhamento.'],
-          ['MOTOCICLETAS','Pelotão RPM / ROCAM','Mobilidade, patrulhamento e coordenação de pelotão.','8H','Amplia mobilidade, presença e capacidade de resposta da unidade.','Pilotagem aplicada, comunicação, patrulhamento e trabalho em dupla.'],
-          ['COMANDO','Comandante RPM / ROCAM','Planejamento, liderança, supervisão e avaliação.','10H','Capacita o comandante a empregar e acompanhar a unidade de motocicletas.','Briefing, distribuição de equipes, supervisão e debriefing.']
-        ].map(([tag,t,d,h,impact,application],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
+        <div className="course-tools"><label><span>BUSCAR NA MATRIZ DE CURSOS</span><input type="search" value={courseQuery} onChange={event => setCourseQuery(event.target.value)} placeholder="Nome do curso ou assunto..." /></label><label><span>CATEGORIA</span><select value={courseLevel} onChange={event => setCourseLevel(event.target.value)}>{['TODOS', ...Array.from(new Set(trainingCourses.map(course => course[0])))].map(level => <option key={level} value={level}>{level}</option>)}</select></label><div aria-live="polite"><b>{String(filteredCourses.length).padStart(2, '0')}</b><span>CURSOS<br/>ENCONTRADOS</span></div></div>
+        {filteredCourses.length === 0 && <div className="course-empty"><h3>Nenhum curso encontrado</h3><p>Tente outro nome ou selecione outra categoria.</p><button onClick={() => { setCourseQuery(''); setCourseLevel('TODOS'); }}>Limpar filtros</button></div>}
+        <div className="training-grid">{filteredCourses.map(([tag,t,d,h,impact,application],i)=><article key={t}><div className="course-top"><span>{String(i+1).padStart(2,'0')}</span><small>{tag}</small><b>{h}</b></div><h3>{t}</h3><p>{d}</p><div className="course-influence"><small>INFLUÊNCIA NA UNIDADE</small><strong>{impact}</strong><small>APLICAÇÃO FORMATIVA</small><span>{application}</span></div><footer><i>AVALIAÇÃO</i><strong>TEÓRICA + PRÁTICA</strong></footer></article>)}</div>
         <div className="formation-impact">
           <header><span>RESULTADO DA FORMAÇÃO</span><h3>O QUE A MATRIZ ENTREGA À UNIDADE</h3></header>
           <div>{[
@@ -214,6 +308,8 @@ export default function Home() {
         </div>
         <div className="training-flow">{[['01','INSCRIÇÃO','Pré-requisitos'],['02','INSTRUÇÃO','Teoria orientada'],['03','SIMULAÇÃO','Prática supervisionada'],['04','AVALIAÇÃO','Critérios objetivos'],['05','CERTIFICAÇÃO','Registro e validade']].map(([n,t,d],i)=><div className="flow-item" key={n}><span>{n}</span><b>{t}</b><small>{d}</small>{i<4&&<i>→</i>}</div>)}</div>
       </section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'gestao'} role="region" aria-label="Gestão">
       <section className="governance">
         <div className="governance-copy"><p className="kicker">GESTÃO DA UNIDADE</p><h2>PADRÃO EM<br/><em>CADA DETALHE.</em></h2><p>A unidade trabalha com responsabilidades definidas, registro de decisões e acompanhamento contínuo do efetivo.</p></div>
         <div className="governance-grid">{[['COMANDO GERAL','Direção estratégica, prioridades e validação das operações.','TEN-CEL Rafael Aguiar'],['SUBCOMANDO','Coordenação da unidade, apoio ao comando e supervisão das atividades.','MAJ PM Jeraldo'],['RECURSOS HUMANOS','Escalas, documentação, desenvolvimento e acompanhamento.','CAP PM Gabriel Santos'],['UNIDADE DE MOTOS','Formação específica, prontidão e gestão da mobilidade.','2º TEN PM H. Smith'],['INSTRUÇÃO','Calendário, instrutores, avaliações e certificações.','Comissão de Formação'],['CONTROLE DE QUALIDADE','Revisão de relatórios, indicadores e plano de melhoria.','Comando da Unidade'],['COMUNICAÇÃO','Briefings, avisos, agenda e memória institucional.','Secretaria Operacional']].map(([t,d,r],i)=><article key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p><small>RESPONSÁVEL</small><b>{r}</b></article>)}</div>
@@ -222,6 +318,8 @@ export default function Home() {
         <header><p className="kicker">PAINEL DE PRONTIDÃO</p><h2>O QUE VAMOS<br/><em>ACOMPANHAR.</em></h2></header>
         <div className="indicator-grid">{[['01','EFETIVO','Presença, disponibilidade e distribuição por função.','100%'],['02','FORMAÇÃO','Cursos concluídos, avaliações e reciclagens.','12 trilhas'],['03','DISCIPLINA','Pontualidade, registros e cumprimento dos padrões.','Contínuo'],['04','OPERAÇÃO','Planejamento executado e relatórios finalizados.','Por ciclo'],['05','LIDERANÇA','Feedback, evolução e desenvolvimento do efetivo.','Mensal'],['06','QUALIDADE','Lições aprendidas e ações de melhoria implementadas.','Semanal']].map(([n,t,d,v])=><article key={n}><span>{n}</span><h3>{t}</h3><strong>{v}</strong><p>{d}</p><div><i/></div></article>)}</div>
       </section>
+          </div>
+          <div className="category-panel" hidden={activeCategory !== 'implantacao'} role="region" aria-label="Implantação">
       <section className="readiness-system">
         <header className="section-head"><div><p className="kicker">CONDIÇÕES DE IMPLANTAÇÃO</p><h2>O QUE PRECISA<br/><em>ESTAR PRONTO.</em></h2></div><p>A ativação acontece somente quando estrutura, pessoas, formação e gestão atingem o padrão mínimo definido pelo comando.</p></header>
         <div className="readiness-board">
@@ -247,7 +345,11 @@ export default function Home() {
         <div className="timeline"><div className="progress-line" />{[['FASE 01','ESTRUTURAÇÃO','Definição de comando, funções, normas e identidade da unidade.'],['FASE 02','CAPACITAÇÃO','Ciclo intensivo de cursos, instruções e exercícios integrados.'],['FASE 03','VALIDAÇÃO','Avaliações técnicas, simulações e certificação do efetivo.'],['FASE 04','ATIVAÇÃO','Início das operações com acompanhamento e melhoria contínua.']].map(([f,t,d],i)=><article key={f}><div className="phase-dot">{i+1}</div><small>{f}</small><h3>{t}</h3><p>{d}</p></article>)}</div>
         <div className="final-cta"><Crest/><div><small>18º BPM/M – VIRTUAL</small><h2>DISCIPLINA. PREPARO.<br/>PRESENÇA.</h2><p>Projeto geral · Implantação BAEP</p></div><a href="#inicio">VOLTAR AO TOPO ↑</a></div>
       </section>
+          </div>
+        </div>
+        <nav className="module-pagination" aria-label="Navegar entre categorias"><button disabled={activeIndex === 0} onClick={() => switchCategory(categories[activeIndex - 1].id, true)}><span>←</span><div><small>ANTERIOR</small><b>{categories[activeIndex - 1]?.label || 'Você está no início'}</b></div></button><span>{currentCategory.code} / 07</span><button disabled={activeIndex === categories.length - 1} onClick={() => switchCategory(categories[activeIndex + 1].id, true)}><div><small>PRÓXIMO</small><b>{categories[activeIndex + 1]?.label || 'Último módulo'}</b></div><span>→</span></button></nav>
       <footer className="disclaimer">PROJETO VIRTUAL INDEPENDENTE · SEM VÍNCULO COM ÓRGÃOS PÚBLICOS REAIS</footer>
+      </div>
     </main>
   );
 }
